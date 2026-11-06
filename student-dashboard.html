@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Dashboard | MFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f44;--deep:#05122b;--mid:#1a3a6e;--g2:#d4af37;--g3:#f0d060;--g4:#fdf0a0;--soft:#c9daf0;--mute:#b8cef0;--card:rgba(10,31,68,.72);--ok:#6ee7a0;--bad:#ff8a8a;--warn:#ffd166;--gold:linear-gradient(135deg,#b8860b,#d4af37 40%,#f0d060 100%);box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:inherit}html{color-scheme:dark}
+body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 10%,#1a3a6e 0%,#0a1f44 55%,#05122b 100%) fixed;color:#fff;line-height:1.5;min-height:100vh}
+.btn{background:var(--gold);color:var(--deep);padding:.72rem 1.3rem;border:0;border-radius:12px;font:700 .93rem 'Inter',sans-serif;cursor:pointer}
+.btn.o{background:transparent;color:#fff;border:1.5px solid var(--g2)}
+.btn.sm{padding:.42rem .85rem;font-size:.81rem;border-radius:10px}
+.crest{width:42px;height:42px;border-radius:50%;background:var(--gold);padding:3px;flex-shrink:0}.crest i{display:flex;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 30%,#1a3a6e,#05122b);align-items:center;justify-content:center;font:800 .8rem 'Inter';font-style:normal;color:var(--g3)}
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.side{position:sticky;top:0;height:100vh;background:rgba(5,18,43,.96);border-right:3px solid var(--g2);padding:1.1rem .85rem;display:flex;flex-direction:column;gap:.28rem;overflow:auto}
+.brand{display:flex;align-items:center;gap:.6rem;font-weight:800;line-height:1.15;margin-bottom:1rem;padding:0 .3rem}
+.nv{display:flex;align-items:center;gap:.6rem;background:none;border:0;color:var(--soft);font:600 .88rem 'Inter',sans-serif;padding:.64rem .78rem;border-radius:11px;cursor:pointer;text-align:left;width:100%}
+.nv b{font-size:.98rem;width:1.1rem;text-align:center}.nv:hover{background:rgba(240,208,96,.1);color:#fff}.nv.on{background:var(--gold);color:var(--deep)}
+.me{margin-top:auto;padding:.8rem;border-radius:13px;background:rgba(255,255,255,.05);font-size:.82rem}.me b{display:block}.me span{color:var(--mute)}.me .role{color:var(--g3);font-weight:600}.me button{margin-top:.6rem;width:100%}
+main{padding:1.55rem 2.1rem 3rem;max-width:1180px;width:100%}
+.hd{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}.hd h2{font-size:1.65rem;font-weight:800}.hd p{color:var(--mute)}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:.95rem}
+.c{background:var(--card);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:1.15rem;box-shadow:0 16px 32px -18px rgba(0,0,0,.6)}
+.c h3{font-size:.75rem;text-transform:uppercase;letter-spacing:1.1px;color:var(--g3);margin-bottom:.78rem}
+.s6{grid-column:span 6}.s4{grid-column:span 4}.s3{grid-column:span 3}.s2{grid-column:span 2}
+.ban{background:var(--gold);color:var(--deep);border:0}.ban h3{color:var(--deep);opacity:.7}.ban h2{font-size:1.65rem;font-weight:800}.ban p{font-weight:600;margin-top:.15rem}
+.ring{--p:0;width:110px;height:110px;border-radius:50%;background:conic-gradient(var(--g3) calc(var(--p)*1%),rgba(255,255,255,.1) 0);display:grid;place-items:center;margin:0 auto}
+.ring div{width:82px;height:82px;border-radius:50%;background:var(--navy);display:grid;place-items:center;font-weight:800}
+.big{font-size:1.4rem;font-weight:800;text-align:center;margin-top:.55rem}.cap{text-align:center;color:var(--mute);font-size:.78rem}
+.bar{display:grid;grid-template-columns:138px 1fr 32px;gap:.55rem;align-items:center;margin-bottom:.52rem;font-size:.85rem}
+.bar span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--soft)}.trk{height:8px;border-radius:10px;background:rgba(255,255,255,.1);overflow:hidden}.trk i{display:block;height:100%;background:var(--gold)}.bar b{text-align:right}
+.tl2{border-left:3px solid var(--g2);margin-left:.35rem;padding-left:.95rem}.ev{position:relative;margin-bottom:.78rem}
+.ev::before{content:'';position:absolute;left:-1.47rem;top:.35rem;width:10px;height:10px;border-radius:50%;background:var(--g3);box-shadow:0 0 0 4px var(--navy)}
+.ev small{color:var(--g3);font-weight:700}.ev b{display:block}.ev span{color:var(--mute);font-size:.83rem}
+.none{color:var(--mute)}.na{color:var(--mute)}.chips{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.9rem}
+.chip{background:rgba(5,18,43,.7);color:#fff;border:1px solid rgba(240,208,96,.3);border-radius:10px;padding:.44rem .88rem;font:600 .85rem 'Inter';cursor:pointer}.chip.on{background:var(--gold);color:var(--deep);border-color:transparent}
+.gtbl{width:100%;max-width:920px;margin:0 auto;border-collapse:collapse;background:var(--card);border-radius:15px;overflow:hidden;border:1px solid rgba(255,255,255,.07)}
+.gtbl th,.gtbl td{padding:.62rem 1.05rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.06);font-size:.89rem}
+.gtbl th{background:rgba(5,18,43,.8);color:var(--g3);font-size:.73rem;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+.gtbl th:first-child,.gtbl td:first-child{text-align:left;font-weight:600;padding-left:1.2rem}.gtbl td:first-child{color:var(--soft)}
+.gtbl tr:last-child td{border-bottom:0}.gtbl .fin{font-weight:800;color:var(--g4)}
+.pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:.58rem;margin-top:.8rem}
+.pill{background:rgba(5,18,43,.6);border-radius:13px;padding:.66rem;border-bottom:4px solid}.pill.P{border-color:var(--ok)}.pill.L{border-color:var(--g3)}.pill.A{border-color:var(--bad)}
+.pill b{display:block;font-size:.84rem}.pill span{font-size:.77rem;color:var(--mute)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:.78rem}.sum div{background:rgba(5,18,43,.6);border-radius:13px;padding:.8rem;text-align:center}
+.sum b{display:block;font-size:1.28rem;font-weight:800}.sum span{font-size:.7rem;text-transform:uppercase;letter-spacing:.8px;color:var(--mute)}
+.pay{display:grid;grid-template-columns:1fr auto;gap:.1rem .75rem}.pay b:last-child{color:var(--g4)}
+.msg{padding:.6rem .82rem;border-radius:10px;margin-bottom:.82rem;font-size:.86rem}.msg.err{background:rgba(255,138,138,.12);color:var(--bad);border:1px solid rgba(255,138,138,.25)}
+.foot{margin-top:1.25rem;text-align:center;color:#8aa8cc;font-size:.79rem}
+@media(max-width:820px){.app{grid-template-columns:1fr}.side{position:fixed;top:auto;bottom:0;left:0;right:0;height:auto;flex-direction:row;border-right:0;border-top:3px solid var(--g2);padding:.3rem .3rem calc(.3rem + env(safe-area-inset-bottom,0px));z-index:9;overflow-x:auto}.brand,.me{display:none}.nv{flex-direction:column;gap:0;padding:.34rem .44rem;font-size:.61rem;min-width:58px;flex:0 0 auto;text-align:center}main{padding:1.1rem .9rem 6.3rem}.s4,.s3,.s2{grid-column:span 6}.gtbl th,.gtbl td{padding:.48rem .48rem;font-size:.81rem}}
+@media print{.side,.noprint{display:none!important}body{background:#fff}.app{display:block}.c{box-shadow:none;border:1px solid #999;background:#fff}*{color:#000!important;-webkit-text-fill-color:#000!important}}
+</style>
+</head>
+<body>
+<section id="dash" class="app">
+  <aside class="side">
+    <div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div>
+    <nav id="nav"></nav>
+    <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div>
+  </aside>
+  <main>
+    <div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div>
+    <div id="flash"></div>
+    <div id="views"></div>
+  </main>
+</section>
+<script>
+var D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],FD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+var $=function(id){return document.getElementById(id)};
+var peso=function(n){return '\u20B1'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
+function onDay(s,d){var m=s.match(/(\w{3}) \u2013 (\w{3})/);if(m){var a=D.indexOf(m[1]),b=D.indexOf(m[2]);if(a>=0&&b>=0)return d>=a&&d<=b}return s.indexOf(D[d])>=0}
+function v(g){return g==null?'<span class="na">\u2013</span>':esc(g)}
+var DEFAULT={accounts:[{id:'2023-0142',pw:'temp1234',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mrs. Maria Santos'}],
+students:{'2023-0142':{sched:[['7:30 \u2013 8:30 AM','Filipino','Mon \u00B7 Wed \u00B7 Fri','Rm 201','Mrs. Reyes'],['8:30 \u2013 9:30 AM','Mathematics','Mon \u2013 Fri','Rm 201','Mr. Garcia'],['9:45 \u2013 10:45 AM','Science','Mon \u00B7 Tue \u00B7 Thu','Science Lab','Ms. Villanueva'],['10:45 \u2013 11:45 AM','English','Mon \u2013 Fri','Rm 201','Mrs. Cruz'],['1:00 \u2013 2:00 PM','Araling Panlipunan','Tue \u00B7 Thu','Rm 201','Mr. Bautista'],['2:00 \u2013 3:00 PM','MAPEH','Wed \u00B7 Fri','Gym','Coach Ramos'],['3:00 \u2013 4:00 PM','Christian Living','Tue','Chapel','Pastor Lim']],
+att:[['Nov 3','Present'],['Oct 31','Present'],['Oct 30','Late'],['Oct 29','Present'],['Oct 28','Present'],['Oct 27','Absent'],['Oct 24','Present'],['Oct 23','Present'],['Oct 22','Present'],['Oct 21','Late']],
+fees:{total:42500,pay:[['Jun 10, 2025','OR-004512','Enrollment / Downpayment',15000],['Aug 5, 2025','OR-004877','Monthly Installment',5500],['Sep 8, 2025','OR-005103','Monthly Installment',5500],['Oct 6, 2025','OR-005390','Monthly Installment',5500]]},
+grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}}};
+function loadDB(){try{var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');if(d&&d.accounts)return d}catch(e){}return JSON.parse(JSON.stringify(DEFAULT))}
+function saveDB(){localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}
+var DB=loadDB(),me=null,sDay=null;
+function acctById(id){return DB.accounts.find(function(a){return a.id===id})}
+function ensureStudent(id){if(!DB.students[id])DB.students[id]={sched:[],att:[],fees:{total:0,pay:[]},grades:{}};return DB.students[id]}
+function openView(v){document.querySelectorAll('.nv').forEach(function(x){x.classList.toggle('on',x.dataset.v===v)});VIEWS[v]()}
+function setMain(t,s,h){$('ttl').textContent=t;$('subh').textContent=s||'';$('views').innerHTML=h}
+function ban(){return '<div class="c ban s6"><h3>STUDENT</h3><h2>'+esc(me.name)+'</h2><p>'+esc(me.level||'')+'</p><p>'+esc(me.adviser?'Adviser: '+me.adviser:'')+'</p></div>'}
+var NAV=[['s_home','\u2302','Overview'],['s_grades','\u2605','Grades'],['s_sched','\u25F7','Schedule'],['s_att','\u2713','Attendance'],['s_pay','\u20B1','Balances']];
+function buildShell(){$('mn').textContent=me.name;$('mr').textContent='Student';$('mid').textContent=me.id;$('nav').innerHTML=NAV.map(function(n,i){return '<button class="nv'+(i===0?' on':'')+'" data-v="'+n[0]+'"><b>'+n[1]+'</b>'+n[2]+'</button>'}).join('');$('nav').onclick=function(e){var b=e.target.closest('.nv');if(b)openView(b.dataset.v)};openView(NAV[0][0])}
+function s_home(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
+ var bars=rows.map(function(r){var g=[r[1],r[2],r[3],r[4]].filter(function(x){return x!=null}).pop();return '<div class="bar"><span>'+esc(r[0])+'</span><div class="trk"><i style="width:'+(g||0)+'%"></i></div><b>'+v(g)+'</b></div>'}).join('')||'<p class="none">No released grades yet.</p>';
+ var paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),rem=(st.fees.total||0)-paid,pc=st.fees.total?Math.round(paid/st.fees.total*100):0;
+ var w=new Date().getDay(),td=w>=1&&w<=5?w:1,sched=(st.sched||[]).filter(function(x){return onDay(x[2],td)}),att=st.att||[];
+ function c(s){return att.filter(function(a){return a[1]===s}).length}
+ setMain('Hello, '+me.name.split(' ')[0]+'!','Student dashboard','<div class="bento">'+ban()+'<div class="c s2"><h3>Balance</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div><div class="big">'+peso(rem)+'</div><div class="cap">remaining</div></div><div class="c s4"><h3>Latest released grades</h3>'+bars+'</div><div class="c s2"><h3>Attendance</h3><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div></div><div class="c s6"><h3>'+FD[td]+' schedule</h3><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div></div>')}
+function s_grades(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
+ var body=rows.map(function(r){return '<tr><td>'+esc(r[0])+'</td><td>'+v(r[1])+'</td><td>'+v(r[2])+'</td><td>'+v(r[3])+'</td><td>'+v(r[4])+'</td><td class="fin">'+v(r[5])+'</td></tr>'}).join('')||'<tr><td colspan="6" class="na" style="text-align:center">No grades available.</td></tr>';
+ setMain('Grades',(me.level||'')+' \u00B7 SY '+sy,'<div class="c" style="padding:0;overflow:hidden"><table class="gtbl"><thead><tr><th>Subject</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Final</th></tr></thead><tbody>'+body+'</tbody></table></div><p class="foot">Only grades validated by the registrar appear here.</p>')}
+function s_sched(){var st=DB.students[me.id]||ensureStudent(me.id),w=new Date().getDay(),td=w>=1&&w<=5?w:1;if(sDay==null)sDay=td;
+ var chips=[1,2,3,4,5].map(function(d){return '<button class="chip '+(d===sDay?'on':'')+'" onclick="sDay='+d+';s_sched()">'+FD[d]+'</button>'}).join('');
+ var list=(st.sched||[]).filter(function(x){return onDay(x[2],sDay)});
+ setMain('Class Schedule',me.level||'','<div class="chips noprint">'+chips+'</div><div class="c"><div class="tl2">'+(list.length?list.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div>')}
+function s_att(){var st=DB.students[me.id]||ensureStudent(me.id),att=st.att||[];function c(s){return att.filter(function(a){return a[1]===s}).length}
+ setMain('Attendance',me.level||'','<div class="c"><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div><div class="pg">'+(att.map(function(a){return '<div class="pill '+a[1][0]+'"><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div>'}).join('')||'<p class="none">No records.</p>')+'</div></div>')}
+function s_pay(){var st=DB.students[me.id]||ensureStudent(me.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),total=st.fees.total||0,rem=total-paid,pc=total?Math.round(paid/total*100):0;
+ setMain('Balances & Payments','Recorded by the cashier','<div class="bento"><div class="c s2"><h3>Paid</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div></div><div class="c s4"><h3>Summary</h3><div class="sum"><div><b>'+peso(total)+'</b><span>Total fees</span></div><div><b style="color:var(--ok)">'+peso(paid)+'</b><span>Paid</span></div><div><b style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</b><span>Remaining</span></div></div></div><div class="c s6"><h3>Recent payment transactions</h3><div class="tl2">'+([].concat(st.fees.pay||[]).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join('')||'<p class="none">No transactions.</p>')+'</div></div></div>')}
+var VIEWS={s_home:s_home,s_grades:s_grades,s_sched:s_sched,s_att:s_att,s_pay:s_pay};
+function checkSession(){try{var s=JSON.parse(sessionStorage.getItem('mfa_session')||'null');if(!s||s.role!=='student'){location.href='student-portal-mfa.html';return false}var a=acctById(s.id);if(!a||a.role!=='student'){location.href='student-portal-mfa.html';return false}me=a;return true}catch(e){location.href='student-portal-mfa.html';return false}}
+$('out').onclick=function(){sessionStorage.removeItem('mfa_session');location.href='student-portal-mfa.html'};
+if(checkSession()) buildShell();
+</script>
+</body>
+</html>

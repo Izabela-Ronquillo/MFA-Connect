@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cashier Dashboard | MFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal-shared.css">
+</head>
+<body>
+<section id="dash" class="app">
+  <aside class="side"><div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div><nav id="nav"></nav>
+  <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div></aside>
+  <main><div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div><div id="flash"></div><div id="views"></div></main>
+</section>
+<script src="portal-shared.js"></script>
+<script>
+var NAV=[['c_home','\u2302','Overview'],['c_txn','\u20B1','Transactions'],['c_bal','\u2261','Balances']];
+function c_home(){var students=DB.accounts.filter(function(a){return a.role==='student'}),due=0;students.forEach(function(s){var st=DB.students[s.id];if(st)due+=Math.max(0,(st.fees.total||0)-(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0))});setMain('Cashier Dashboard','Record payments and monitor balances','<div class="bento">'+ban()+'<div class="c s3"><h3>Student records</h3><div class="big">'+students.length+'</div></div><div class="c s3"><h3>Total remaining (demo)</h3><div class="big">'+peso(due)+'</div></div></div>')}
+function c_txn(){var students=DB.accounts.filter(function(a){return a.role==='student'});setMain('Update Payment Transactions','Record recent payments for a student','<div class="c"><h3>New transaction</h3><div class="row"><div><label>Student</label><select id="p_st" onchange="renderPayList()">'+students.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>'}).join('')+'</select></div><div><label>OR / Reference</label><input id="p_or" placeholder="OR-000000"></div><div><label>Description</label><input id="p_de" value="Monthly Installment"></div><div><label>Amount</label><input id="p_am" type="number" min="0" step="0.01"></div></div><button class="btn sm" onclick="addPay()">Record Payment</button></div><div class="c" style="margin-top:1rem"><h3>Recent transactions</h3><div id="payList"></div></div>');renderPayList()}
+function renderPayList(){var sid=$('p_st')&&$('p_st').value,st=sid&&DB.students[sid];$('payList').innerHTML=st&&st.fees.pay.length?[].concat(st.fees.pay).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join(''):'<p class="none">No transactions for this student.</p>'}
+function addPay(){var sid=$('p_st').value,st=ensureStudent(sid),amt=+$('p_am').value,or=$('p_or').value.trim()||('OR-'+(++DB._seq)),de=$('p_de').value.trim()||'Payment';if(!(amt>0)){flash('Enter a valid amount.','err');return}st.fees.pay.push([today(),or,de,amt]);saveDB();flash('Payment recorded. Student balance updated.');$('p_am').value='';renderPayList()}
+function c_bal(){var students=DB.accounts.filter(function(a){return a.role==='student'});setMain('Remaining Balances','Update total fees and review balances','<div class="c"><table class="tbl"><thead><tr><th>Student</th><th>Total Fees</th><th>Paid</th><th>Remaining</th><th class="noprint">Set Total</th></tr></thead><tbody>'+ (students.length?students.map(function(s){var st=ensureStudent(s.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),rem=(st.fees.total||0)-paid;return '<tr><td>'+esc(s.name)+'</td><td>'+peso(st.fees.total)+'</td><td style="color:var(--ok)">'+peso(paid)+'</td><td style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</td><td class="noprint"><div class="acts"><input id="tot_'+esc(s.id)+'" type="number" value="'+(st.fees.total||0)+'" style="width:110px"><button class="btn sm" onclick="setTotal(\''+esc(s.id)+'\')">Save</button></div></td></tr>'}).join(''):'<tr><td colspan="5" class="na">No students.</td></tr>')+'</tbody></table></div>')}
+function setTotal(sid){var st=ensureStudent(sid);st.fees.total=+($('tot_'+sid).value||0);saveDB();flash('Total fees updated.');c_bal()}
+var VIEWS={c_home:c_home,c_txn:c_txn,c_bal:c_bal};
+$('out').onclick=signOut;
+if(checkSession('cashier'))buildShell();
+</script></body></html>

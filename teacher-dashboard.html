@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Teacher Dashboard | MFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal-shared.css">
+</head>
+<body>
+<section id="dash" class="app">
+  <aside class="side"><div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div><nav id="nav"></nav>
+  <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div></aside>
+  <main><div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div><div id="flash"></div><div id="views"></div></main>
+</section>
+<script src="portal-shared.js"></script>
+<script>
+var NAV=[['t_home','\u2302','Overview'],['t_sched','\u25F7','Schedule'],['t_upload','\u2605','Upload Grades']];
+function t_home(){var pend=DB.gradeQueue.filter(function(g){return g.teacher===me.name&&g.status==='pending'}).length;setMain('Teacher Dashboard','Manage classes and submit grades','<div class="bento">'+ban()+'<div class="c s3"><h3>Pending validation</h3><div class="big">'+pend+'</div><div class="cap">grades awaiting registrar</div></div><div class="c s3"><h3>Class blocks</h3><div class="big">'+DB.teacherSched.length+'</div></div></div>')}
+function t_sched(){setMain('Class Schedule','Your assigned classes','<div class="c"><div class="tl2">'+DB.teacherSched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+' \u00B7 '+esc(x[4])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+'</span></div>'}).join('')+'</div></div>')}
+function t_upload(){var students=DB.accounts.filter(function(a){return a.role==='student'}),opts=students.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>'}).join(''),mine=DB.gradeQueue.filter(function(g){return g.teacher===me.name});
+ setMain('Upload Grades','Submitted grades must be validated by the registrar before students see them','<div class="c"><h3>Submit grade</h3><div class="row"><div><label>Student</label><select id="tg_st">'+(opts||'<option>No students</option>')+'</select></div><div><label>Subject</label><input id="tg_sub" value="'+esc(me.subject||'')+'"></div><div><label>Quarter</label><select id="tg_q"><option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option></select></div><div><label>Grade</label><input id="tg_g" type="number" min="60" max="100" placeholder="60-100"></div></div><button class="btn sm" onclick="submitGrade()">Send to Registrar</button></div><div class="c" style="margin-top:1rem"><h3>Your submissions</h3><table class="tbl"><thead><tr><th>Student</th><th>Subject</th><th>Q</th><th>Grade</th><th>Status</th></tr></thead><tbody>'+(mine.length?mine.map(function(g){return '<tr><td>'+esc(g.student)+'</td><td>'+esc(g.subject)+'</td><td>'+g.quarter+'</td><td>'+g.grade+'</td><td><span class="tag '+(g.status==='pending'?'pend':g.status==='approved'?'ok':'bad')+'">'+esc(g.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="5" class="na">No submissions.</td></tr>')+'</tbody></table></div>')}
+function submitGrade(){var sid=$('tg_st').value,sub=$('tg_sub').value.trim(),q=+$('tg_q').value,g=+$('tg_g').value,stu=acctById(sid);if(!stu||!sub||!(g>=60&&g<=100)){flash('Select student, subject, and grade (60-100).','err');return}DB.gradeQueue.push({id:++DB._seq,studentId:sid,student:stu.name,subject:sub,quarter:q,grade:g,teacher:me.name,status:'pending',sy:stu.sy||'2025\u20132026'});saveDB();flash('Grade sent to registrar for validation.');t_upload()}
+var VIEWS={t_home:t_home,t_sched:t_sched,t_upload:t_upload};
+$('out').onclick=signOut;
+if(checkSession('teacher'))buildShell();
+</script></body></html>

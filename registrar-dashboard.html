@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Registrar Dashboard | MFA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="portal-shared.css">
+</head>
+<body>
+<section id="dash" class="app">
+  <aside class="side"><div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div><nav id="nav"></nav>
+  <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div></aside>
+  <main><div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div><div id="flash"></div><div id="views"></div></main>
+</section>
+<script src="portal-shared.js"></script>
+<script>
+var NAV=[['r_home','\u2302','Overview'],['r_validate','\u2713','Validate Grades'],['r_docs','\u25A4','Documents']];
+function r_home(){var pend=DB.gradeQueue.filter(function(g){return g.status==='pending'}).length;setMain('Registrar Dashboard','Validate grades and manage documents','<div class="bento">'+ban()+'<div class="c s3"><h3>Awaiting validation</h3><div class="big">'+pend+'</div></div><div class="c s3"><h3>Documents</h3><div class="big">'+DB.documents.length+'</div></div></div>')}
+function r_validate(){var rows=DB.gradeQueue.slice().reverse();setMain('Validate Grades','Approve to release grades to student dashboards','<div class="c"><table class="tbl"><thead><tr><th>Student</th><th>Subject</th><th>Q</th><th>Grade</th><th>Teacher</th><th>Status</th><th class="noprint">Action</th></tr></thead><tbody>'+ (rows.length?rows.map(function(g){return '<tr><td>'+esc(g.student)+'</td><td>'+esc(g.subject)+'</td><td>'+g.quarter+'</td><td><b>'+g.grade+'</b></td><td>'+esc(g.teacher)+'</td><td><span class="tag '+(g.status==='pending'?'pend':g.status==='approved'?'ok':'bad')+'">'+esc(g.status)+'</span></td><td class="noprint">'+(g.status==='pending'?'<div class="acts"><button class="btn sm ok" onclick="valGrade('+g.id+',true)">Approve</button><button class="btn sm bad" onclick="valGrade('+g.id+',false)">Reject</button></div>':'\u2014')+'</td></tr>'}).join(''):'<tr><td colspan="7" class="na">No submissions.</td></tr>')+'</tbody></table></div>')}
+function valGrade(id,ok){var g=DB.gradeQueue.find(function(x){return x.id===id});if(!g||g.status!=='pending')return;g.status=ok?'approved':'rejected';if(ok){var st=ensureStudent(g.studentId),sy=g.sy||'2025\u20132026';if(!st.grades[sy])st.grades[sy]=[];var row=st.grades[sy].find(function(r){return r[0]===g.subject});if(!row){row=[g.subject,null,null,null,null,null];st.grades[sy].push(row)}row[g.quarter]=g.grade;var qs=[row[1],row[2],row[3],row[4]].filter(function(x){return x!=null});row[5]=qs.length?Math.round(qs.reduce(function(a,b){return a+b},0)/qs.length):null}saveDB();flash(ok?'Grade approved and released to the student.':'Grade rejected.');r_validate()}
+function r_docs(){var students=DB.accounts.filter(function(a){return a.role==='student'});setMain('School Documents','Registration forms and certificates of enrollment','<div class="c"><h3>Issue / update document</h3><div class="row"><div><label>Student</label><select id="d_st">'+students.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>'}).join('')+'</select></div><div><label>Document type</label><select id="d_ty"><option>Registration Form</option><option>Certificate of Enrollment</option><option>Good Moral Certificate</option><option>Report Card Copy</option></select></div><div><label>Status</label><input id="d_sts" value="On file"></div></div><button class="btn sm" onclick="addDoc()">Save Document Record</button></div><div class="c" style="margin-top:1rem"><h3>Document records</h3>'+ (DB.documents.length?DB.documents.map(function(d){return '<div class="doc"><div><b>'+esc(d.type)+'</b><span>'+esc(d.student)+' ('+esc(d.studentId)+') \u00B7 '+esc(d.status)+' \u00B7 '+esc(d.date)+'</span></div><button class="btn sm o noprint" onclick="delDoc('+d.id+')">Remove</button></div>'}).join(''):'<p class="none">No records.</p>')+'</div>')}
+function addDoc(){var sid=$('d_st').value,stu=acctById(sid);if(!stu){flash('Select a student.','err');return}DB.documents.unshift({id:++DB._seq,studentId:sid,student:stu.name,type:$('d_ty').value,status:$('d_sts').value.trim()||'On file',date:today()});saveDB();flash('Document record saved.');r_docs()}
+function delDoc(id){DB.documents=DB.documents.filter(function(d){return d.id!==id});saveDB();r_docs()}
+var VIEWS={r_home:r_home,r_validate:r_validate,r_docs:r_docs};
+$('out').onclick=signOut;
+if(checkSession('registrar'))buildShell();
+</script></body></html>

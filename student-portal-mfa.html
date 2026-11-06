@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MFA Portal Login | Marvelous Faith Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0a1f44;--deep:#05122b;--g2:#d4af37;--g3:#f0d060;--g4:#fdf0a0;--mute:#b8cef0;--bad:#ff8a8a;--gold:linear-gradient(135deg,#b8860b,#d4af37 40%,#f0d060 100%);box-sizing:border-box}
+*{margin:0;padding:0;box-sizing:inherit}html{color-scheme:dark}
+body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 10%,#1a3a6e 0%,#0a1f44 55%,#05122b 100%) fixed;color:#fff;min-height:100vh}
+.gt{background:var(--gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.btn{background:var(--gold);color:var(--deep);padding:.82rem 1.5rem;border:0;border-radius:12px;font:700 .98rem 'Inter',sans-serif;cursor:pointer;width:100%}
+.crest{width:88px;height:88px;border-radius:50%;background:var(--gold);padding:3px;margin-bottom:1.6rem;box-shadow:0 0 0 6px rgba(5,18,43,.2)}
+.crest i{display:flex;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 30%,#1a3a6e,#05122b);align-items:center;justify-content:center;font:800 1.5rem 'Inter';font-style:normal;color:var(--g3)}
+.split{display:grid;min-height:100vh;grid-template-columns:1.1fr 1fr}
+.art{background:var(--gold);color:var(--deep);padding:3rem 11%;display:flex;flex-direction:column;justify-content:center}
+.art h1{font-size:2.7rem;line-height:1.1;font-weight:800}.art p{font-size:1.03rem;margin-top:.85rem;max-width:420px;font-weight:500}
+.art em{display:inline-block;margin-top:1.7rem;font-weight:800;text-transform:uppercase;border-top:2px solid rgba(5,18,43,.4);border-bottom:2px solid rgba(5,18,43,.4);padding:.35rem 0}
+.fwrap{display:flex;align-items:center;justify-content:center;padding:2rem 7%}form{width:100%;max-width:420px}
+h2{font-size:1.9rem;font-weight:800}.sub{color:var(--mute);margin:.25rem 0 1.3rem}
+label{display:block;font-weight:600;font-size:.84rem;margin:0 0 .28rem;color:var(--g4)}
+input{width:100%;padding:.76rem 1rem;border-radius:12px;border:1px solid rgba(240,208,96,.25);background:rgba(5,18,43,.8);color:#fff;font:500 .97rem 'Inter',sans-serif;margin-bottom:.95rem}
+input:focus{outline:2px solid var(--g3)}
+.err{color:var(--bad);font-size:.87rem;min-height:1.2rem;margin-bottom:.4rem}
+.pw-wrap{position:relative;margin-bottom:.95rem}
+.pw-wrap input{margin-bottom:0;padding-right:4.5rem}
+.pw-toggle{position:absolute;right:.5rem;top:50%;transform:translateY(-50%);background:rgba(240,208,96,.12);color:var(--g3);border:1px solid rgba(240,208,96,.3);border-radius:8px;padding:.28rem .55rem;font:600 .76rem 'Inter',sans-serif;cursor:pointer}
+.pw-toggle:hover{background:rgba(240,208,96,.22)}
+.pw-toggle:focus{outline:2px solid var(--g3)}
+.hint{margin-top:1.1rem;font-size:.79rem;color:var(--mute);border-top:1px solid rgba(255,255,255,.08);padding-top:.85rem;line-height:1.7}.hint b{color:var(--g3)}
+.links{margin-top:.8rem}.links a{color:var(--g3);font-size:.82rem;text-decoration:none}
+@media(max-width:900px){.split{grid-template-columns:1fr}.art{padding:2rem 7%}.art h1{font-size:1.9rem}.crest{width:62px;height:62px;margin-bottom:.9rem}.art em{display:none}}
+</style>
+</head>
+<body>
+<section class="split">
+  <div class="art"><div class="crest"><i>MFA</i></div><h1>Marvelous Faith<br>Academy</h1><p>MFA Connect &mdash; sign in and you will be redirected to your role dashboard (Student, Teacher, Registrar, Cashier, or Admin).</p><em>Keep the Faith Alive!</em></div>
+  <div class="fwrap">
+    <form id="lf" autocomplete="off">
+      <h2>Welcome <span class="gt">back</span></h2><p class="sub">Use the account provided by the school.</p>
+      <label for="uid">ID / Username</label><input id="uid" placeholder="e.g. 2023-0142 or admin-001" required>
+      <label for="pw">Password</label><div class="pw-wrap"><input id="pw" type="password" required><button type="button" class="pw-toggle" data-target="pw" aria-pressed="false">Show</button></div>
+      <div class="err" id="err"></div>
+      <button class="btn" type="submit">Sign In</button>
+      <div class="links"><a href="index.html">&larr; Back to website</a></div>
+      <div class="hint"><b>Student:</b> 2023-0142 / temp1234<br><b>Teacher:</b> teacher-001 / teacher123<br><b>Admin:</b> admin-001 / admin123<br><b>Registrar:</b> registrar-001 / registrar123<br><b>Cashier:</b> cashier-001 / cashier123<br>Accounts with a temporary password must change it before accessing the dashboard.</div>
+    </form>
+    <form id="cf" autocomplete="off" style="display:none">
+      <h2>Change <span class="gt">password</span></h2><p class="sub" id="cfSub">Your temporary password must be changed before you can continue.</p>
+      <label for="np1">New Password</label><div class="pw-wrap"><input id="np1" type="password" minlength="8" placeholder="At least 8 characters" required><button type="button" class="pw-toggle" data-target="np1" aria-pressed="false">Show</button></div>
+      <label for="np2">Confirm New Password</label><div class="pw-wrap"><input id="np2" type="password" required><button type="button" class="pw-toggle" data-target="np2" aria-pressed="false">Show</button></div>
+      <div class="err" id="err2"></div>
+      <button class="btn" type="submit">Save &amp; Continue</button>
+      <div class="links"><a href="#" id="cfBack">&larr; Back to sign in</a></div>
+    </form>
+  </div>
+</section>
+<script>
+var DEFAULT={school:{name:'Marvelous Faith Academy',tagline:'Keep the Faith Alive!',address:'[School Address]',phone:'[Contact Number]',email:'[School Email]',about:'MFA Connect portal.'},
+ accounts:[{id:'admin-001',pw:'admin123',role:'admin',name:'Ms. Angela Reyes',first:false},{id:'registrar-001',pw:'registrar123',role:'registrar',name:'Mrs. Liza Bautista',first:false},{id:'cashier-001',pw:'cashier123',role:'cashier',name:'Mr. Carlo Santos',first:false},{id:'teacher-001',pw:'teacher123',role:'teacher',name:'Mr. Roberto Garcia',subject:'Mathematics',first:false},{id:'2023-0142',pw:'temp1234',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mrs. Maria Santos',first:true}],
+ students:{'2023-0142':{sched:[['7:30 \u2013 8:30 AM','Filipino','Mon \u00B7 Wed \u00B7 Fri','Rm 201','Mrs. Reyes'],['8:30 \u2013 9:30 AM','Mathematics','Mon \u2013 Fri','Rm 201','Mr. Garcia'],['9:45 \u2013 10:45 AM','Science','Mon \u00B7 Tue \u00B7 Thu','Science Lab','Ms. Villanueva'],['10:45 \u2013 11:45 AM','English','Mon \u2013 Fri','Rm 201','Mrs. Cruz'],['1:00 \u2013 2:00 PM','Araling Panlipunan','Tue \u00B7 Thu','Rm 201','Mr. Bautista'],['2:00 \u2013 3:00 PM','MAPEH','Wed \u00B7 Fri','Gym','Coach Ramos'],['3:00 \u2013 4:00 PM','Christian Living','Tue','Chapel','Pastor Lim']],
+ att:[['Nov 3','Present'],['Oct 31','Present'],['Oct 30','Late'],['Oct 29','Present'],['Oct 28','Present'],['Oct 27','Absent'],['Oct 24','Present'],['Oct 23','Present'],['Oct 22','Present'],['Oct 21','Late']],
+ fees:{total:42500,pay:[['Jun 10, 2025','OR-004512','Enrollment / Downpayment',15000],['Aug 5, 2025','OR-004877','Monthly Installment',5500],['Sep 8, 2025','OR-005103','Monthly Installment',5500],['Oct 6, 2025','OR-005390','Monthly Installment',5500]]},
+ grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}},
+ teacherSched:[['7:30 \u2013 8:30 AM','Mathematics 8','Grade 8 \u2013 St. Matthew','Rm 201','Mon \u2013 Fri'],['8:30 \u2013 9:30 AM','Math Remediation','Grade 8 \u2013 St. Mark','Rm 202','Tue \u00B7 Thu']],
+ gradeQueue:[{id:1,studentId:'2023-0142',student:'Juan Miguel Dela Cruz',subject:'Mathematics',quarter:2,grade:87,teacher:'Mr. Roberto Garcia',status:'pending',sy:'2025\u20132026'}],
+ documents:[{id:1,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Registration Form',status:'On file',date:'Jun 5, 2025'},{id:2,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Certificate of Enrollment',status:'Available on request',date:'Jun 10, 2025'}],_seq:10};
+function loadDB(){try{var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');if(d&&d.accounts)return d}catch(e){}localStorage.setItem('mfa_portal_db',JSON.stringify(DEFAULT));return JSON.parse(JSON.stringify(DEFAULT))}
+function saveDB(){localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}
+var DB=loadDB(), PENDING=null;
+var ROUTES={student:'student-dashboard.html',teacher:'teacher-dashboard.html',registrar:'registrar-dashboard.html',cashier:'cashier-dashboard.html',admin:'admin-dashboard.html'};
+function showChange(a){
+  PENDING=a;
+  document.getElementById('lf').style.display='none';
+  document.getElementById('cf').style.display='block';
+  document.getElementById('cfSub').textContent='Hi '+a.name+'. Your temporary password must be changed before you can access the '+a.role+' dashboard.';
+  document.getElementById('np1').value=''; document.getElementById('np2').value=''; document.getElementById('err2').textContent='';
+  document.getElementById('np1').focus();
+}
+function goBack(e){ if(e)e.preventDefault(); PENDING=null; document.getElementById('cf').style.display='none'; document.getElementById('lf').style.display='block'; document.getElementById('err').textContent=''; }
+document.getElementById('cfBack').addEventListener('click', goBack);
+document.getElementById('lf').addEventListener('submit',function(e){
+  e.preventDefault();
+  var id=document.getElementById('uid').value.trim();
+  var pw=document.getElementById('pw').value;
+  var err=document.getElementById('err');
+  var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===id){a=DB.accounts[i];break;}}
+  if(!a||a.pw!==pw){err.textContent='Incorrect ID or password.';return}
+  err.textContent='';
+  if(a.first){ showChange(a); return; }
+  var dest=ROUTES[a.role];
+  if(!dest){err.textContent='No dashboard configured for role: '+a.role;return}
+  sessionStorage.setItem('mfa_session',JSON.stringify({id:a.id,role:a.role,ts:Date.now()}));
+  window.location.href=dest;
+});
+document.getElementById('cf').addEventListener('submit',function(e){
+  e.preventDefault();
+  var err=document.getElementById('err2'), p1=document.getElementById('np1').value, p2=document.getElementById('np2').value;
+  if(!PENDING){err.textContent='Session expired. Please sign in again.';return}
+  if(p1.length<8){err.textContent='Password must be at least 8 characters.';return}
+  if(p1!==p2){err.textContent='Passwords do not match.';return}
+  if(p1===PENDING.pw){err.textContent='New password must be different from the temporary password.';return}
+  var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===PENDING.id){a=DB.accounts[i];break;}}
+  if(!a){err.textContent='Account not found. Please sign in again.';return}
+  a.pw=p1; a.first=false; saveDB();
+  var dest=ROUTES[a.role];
+  if(!dest){err.textContent='No dashboard configured for role: '+a.role;return}
+  sessionStorage.setItem('mfa_session',JSON.stringify({id:a.id,role:a.role,ts:Date.now()}));
+  window.location.href=dest;
+});
+
+document.querySelectorAll('.pw-toggle').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var inp=document.getElementById(btn.getAttribute('data-target'));
+    if(!inp) return;
+    var show=inp.type==='password';
+    inp.type=show?'text':'password';
+    btn.textContent=show?'Hide':'Show';
+    btn.setAttribute('aria-pressed', show?'true':'false');
+  });
+});
+</script>
+</body>
+</html>

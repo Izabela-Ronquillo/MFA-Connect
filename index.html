@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- MFA Admin index override -->
+<script>
+(function(){
+  try{
+    if(window.__mfaOverrideApplied) return;
+    var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');
+    if(d && d.site && d.site.indexHtml && String(d.site.indexHtml).trim()){
+      window.__mfaOverrideApplied=true;
+      document.open(); document.write(d.site.indexHtml); document.close();
+    }
+  }catch(e){}
+})();
+</script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marvelous Faith Academy | Bacoor</title>
+  <!-- Google Font & Font Awesome -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0a1f44;
+      color: #ffffff;
+      line-height: 1.5;
+    }
+
+    /* Royal blue background with subtle depth */
+    .page-bg {
+      background: radial-gradient(circle at 15% 20%, #1a3a6e 0%, #0a1f44 60%, #05122b 100%);
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Gold gradient utility */
+    .gold-grad {
+      background: linear-gradient(135deg, #b8860b 0%, #d4af37 35%, #f0d060 70%, #fdf0a0 100%);
+    }
+
+    .gold-grad-text {
+      background: linear-gradient(135deg, #b8860b 0%, #d4af37 35%, #f0d060 70%, #fdf0a0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ===== CIRCULAR LOGO FRAME ===== */
+    .logo-frame {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      padding: 3px;
+      box-shadow: 0 0 0 2px rgba(240, 208, 96, 0.25), 0 6px 15px rgba(0, 0, 0, 0.4);
+      transition: 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .logo-frame:hover {
+      box-shadow: 0 0 0 3px rgba(240, 208, 96, 0.5), 0 8px 20px rgba(212, 175, 55, 0.5);
+      transform: scale(1.05);
+    }
+
+    .logo-frame-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      background: radial-gradient(circle at 30% 30%, #1a3a6e, #05122b);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo-frame-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
+    }
+
+    /* Larger frame for footer */
+    .logo-frame.lg {
+      width: 64px;
+      height: 64px;
+      padding: 4px;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 5%;
+      background: rgba(5, 18, 43, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 3px solid;
+      border-image: linear-gradient(90deg, #b8860b, #d4af37, #f0d060) 1;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: 0.2s;
+      padding-bottom: 4px;
+      border-bottom: 3px solid transparent;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: #f0d060;
+      color: #fdf0a0;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #b8860b, #d4af37 40%, #f0d060 100%);
+      color: #05122b;
+      padding: 0.8rem 1.8rem;
+      border-radius: 50px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.25s ease;
+      border: none;
+      box-shadow: 0 6px 18px rgba(212, 175, 55, 0.4);
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #d4af37, #f0d060, #fdf0a0);
+      box-shadow: 0 12px 25px rgba(212, 175, 55, 0.6);
+      transform: scale(1.02);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid;
+      border-image: linear-gradient(135deg, #b8860b, #d4af37, #f0d060) 1;
+      color: #ffffff;
+      box-shadow: none;
+      padding: 0.8rem 1.8rem;
+    }
+
+    .btn-outline:hover {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      color: #05122b;
+      border-color: transparent;
+    }
+
+    /* HERO */
+    .hero {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4rem 5% 5rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-content {
+      flex: 1 1 500px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      color: #05122b;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
+      margin-bottom: 1.8rem;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .hero h1 {
+      font-size: 3.5rem;
+      line-height: 1.2;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1px;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: inline-block;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #c9daf0;
+      max-width: 600px;
+      margin-bottom: 2.5rem;
+      opacity: 0.9;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    /* ===== PERFECT CIRCLE HERO IMAGE ===== */
+    .hero-image {
+      flex: 1 1 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-circle {
+      position: relative;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      padding: 10px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 8px rgba(212, 175, 55, 0.15);
+      transition: 0.35s ease;
+    }
+
+    .hero-circle:hover {
+      transform: scale(1.02);
+      box-shadow: 0 35px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 12px rgba(240, 208, 96, 0.25);
+    }
+
+    .hero-circle-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid #05122b;
+      background: #1a3a6e;
+      position: relative;
+    }
+
+    .hero-circle-inner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 50%;
+      transition: 0.4s ease;
+    }
+
+    .hero-circle:hover .hero-circle-inner img {
+      transform: scale(1.05);
+    }
+
+    /* Decorative gold ring accent */
+    .hero-circle::after {
+      content: '';
+      position: absolute;
+      inset: -14px;
+      border-radius: 50%;
+      border: 2px dashed rgba(240, 208, 96, 0.4);
+      pointer-events: none;
+      animation: spin 30s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ===== INFO SECTIONS ===== */
+    .info-section {
+      padding: 4rem 5%;
+    }
+
+    .info-section.alt {
+      background: rgba(5, 18, 43, 0.6);
+      border-top: 1px solid rgba(240, 208, 96, 0.15);
+      border-bottom: 1px solid rgba(240, 208, 96, 0.15);
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.8rem;
+      letter-spacing: -0.5px;
+    }
+
+    .section-title span {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-sub {
+      text-align: center;
+      color: #b8cef0;
+      font-size: 1.1rem;
+      max-width: 650px;
+      margin: 0 auto 3rem;
+    }
+
+    /* History layout */
+    .history-grid {
+      display: flex;
+      gap: 3rem;
+      flex-wrap: wrap;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .history-text {
+      flex: 1 1 500px;
+    }
+
+    .history-text p {
+      color: #c9daf0;
+      font-size: 1.05rem;
+      margin-bottom: 1.2rem;
+      line-height: 1.7;
+    }
+
+    .history-highlight {
+      flex: 1 1 300px;
+      background: rgba(10, 31, 68, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 28px;
+      padding: 2.5rem 2rem;
+      border-left: 6px solid;
+      border-image: linear-gradient(180deg, #b8860b, #d4af37, #f0d060) 1;
+      border-image-slice: 0 0 0 6;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+
+    .history-highlight .year {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .history-highlight h4 {
+      color: #ffffff;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .history-highlight p {
+      color: #b8cef0;
+      font-size: 0.98rem;
+    }
+
+    /* Mission & Vision cards */
+    .mv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .mv-card {
+      background: rgba(10, 31, 68, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 3rem 2.5rem;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      text-align: center;
+      transition: 0.3s ease;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mv-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #b8860b, #d4af37, #f0d060);
+    }
+
+    .mv-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 50px -15px rgba(212, 175, 55, 0.25);
+      background: rgba(10, 31, 68, 0.9);
+    }
+
+    .mv-icon {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.8rem;
+      font-size: 2.2rem;
+      color: #05122b;
+      box-shadow: 0 10px 25px -6px rgba(212, 175, 55, 0.6);
+    }
+
+    .mv-card h3 {
+      font-size: 1.7rem;
+      color: #ffffff;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+    }
+
+    .mv-card p {
+      color: #c9daf0;
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    /* ===== SCHOOL HYMN ===== */
+    .hymn-section {
+      padding: 4rem 5%;
+    }
+
+    .hymn-card {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(10, 31, 68, 0.7);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 3.5rem 3rem;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .hymn-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      background: linear-gradient(90deg, #b8860b, #d4af37, #f0d060);
+    }
+
+    .hymn-card::after {
+      content: '\f001';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      bottom: -20px;
+      right: 20px;
+      font-size: 8rem;
+      color: rgba(212, 175, 55, 0.06);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .hymn-icon {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.8rem;
+      font-size: 2.2rem;
+      color: #05122b;
+      box-shadow: 0 10px 25px -6px rgba(212, 175, 55, 0.6);
+    }
+
+    .hymn-card h3 {
+      font-size: 2rem;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .hymn-sub {
+      color: #d4af37;
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 2rem;
+    }
+
+    .hymn-lyrics {
+      color: #c9daf0;
+      font-size: 1.1rem;
+      line-height: 2;
+      font-style: italic;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hymn-lyrics p {
+      margin-bottom: 1.5rem;
+    }
+
+    .hymn-lyrics p:last-child {
+      margin-bottom: 0;
+    }
+
+    .hymn-divider {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #b8860b, #d4af37, #f0d060);
+      margin: 1.5rem auto;
+      border-radius: 3px;
+    }
+
+    /* ===== STATS BAND (SMALLER) ===== */
+    .stats {
+      background: linear-gradient(135deg, #b8860b 0%, #d4af37 35%, #f0d060 70%, #fdf0a0 100%);
+      padding: 2rem 5%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border-top: 5px solid #05122b;
+      border-bottom: 5px solid #05122b;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-item {
+      text-align: center;
+      color: #05122b;
+      flex: 1 1 130px;
+    }
+
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0a1f44;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0.9;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #05122b;
+    }
+
+    /* Tagline between stats */
+    .stat-tagline {
+      text-align: center;
+      color: #0a1f44;
+      flex: 1 1 200px;
+      padding: 0 0.5rem;
+    }
+
+    .stat-tagline span {
+      display: inline-block;
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-style: italic;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: #05122b;
+      padding: 0.5rem 1.2rem;
+      border-top: 2px solid rgba(5, 18, 43, 0.4);
+      border-bottom: 2px solid rgba(5, 18, 43, 0.4);
+    }
+
+    /* FOOTER */
+    footer {
+      background: #05122b;
+      color: #ffffff;
+      padding: 3rem 5% 1.5rem;
+      border-top: 8px solid;
+      border-image: linear-gradient(90deg, #b8860b, #d4af37, #f0d060) 1;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-col h4 {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.2rem;
+      margin-bottom: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-col a {
+      color: #b8cef0;
+      text-decoration: none;
+      transition: 0.2s;
+      font-size: 0.98rem;
+    }
+
+    .footer-col a:hover {
+      color: #f0d060;
+      padding-left: 5px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ===== FOOTER CONTACT DETAILS ===== */
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .footer-contact-item i {
+      color: #d4af37;
+      font-size: 1rem;
+      margin-top: 4px;
+      flex-shrink: 0;
+      width: 16px;
+      text-align: center;
+    }
+
+    .footer-contact-item span,
+    .footer-contact-item a {
+      color: #b8cef0;
+      font-size: 0.95rem;
+      text-decoration: none;
+      line-height: 1.6;
+    }
+
+    .footer-contact-item a:hover {
+      color: #f0d060;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.95rem;
+      color: #8aa8cc;
+    }
+
+    /* Social icons as links */
+    .social-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-links a {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      transition: 0.2s;
+      width: 40px;
+      height: 40px;
+      text-decoration: none;
+      border: 1px solid rgba(240, 208, 96, 0.2);
+    }
+
+    .social-links a:hover {
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      color: #05122b;
+      transform: scale(1.1);
+      border-color: transparent;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .hero-circle {
+        width: 360px;
+        height: 360px;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .hero h1 {
+        font-size: 2.8rem;
+      }
+      .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem 5%;
+      }
+      .nav-links {
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .hero-circle {
+        width: 320px;
+        height: 320px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero-actions .btn {
+        width: 100%;
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 1.8rem;
+      }
+      .stat-label {
+        font-size: 0.75rem;
+      }
+      .stat-tagline span {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+      }
+      .logo {
+        font-size: 1.4rem;
+      }
+      .logo-frame {
+        width: 48px;
+        height: 48px;
+      }
+      .hero-circle {
+        width: 260px;
+        height: 260px;
+        padding: 7px;
+      }
+      .hero-circle::after {
+        inset: -10px;
+      }
+      .history-highlight .year {
+        font-size: 2.2rem;
+      }
+      .hymn-card {
+        padding: 2.5rem 1.8rem;
+      }
+      .hymn-card h3 {
+        font-size: 1.6rem;
+      }
+      .hymn-lyrics {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .hero-circle {
+        width: 220px;
+        height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="page-bg">
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">
+      <div class="logo-frame">
+        <div class="logo-frame-inner">
+          <img src="https://scontent.fmnl45-2.fna.fbcdn.net/v/t39.30808-6/305389710_1750407355294205_3407545213188990535_n.jpg?stp=dst-jpg_tt6&cstp=mx2000x2000&ctp=s2000x2000&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGC_MRndk0R0l2cZPkQ7MTpoOIqBAlvlXag4ioECW-VdkDECwv3xoGH5Xsb_1f_dyN_jvFF0-omFaLwD8Dtpcz-&_nc_ohc=rDXh2j8wTOAQ7kNvwHpM1Fy&_nc_oc=AdrUJqppFmIIkG6PLNmVJ2NxJsiyEqQ4tWdWmYpy8Dx9haAusbqlbiBWByUKMiVrwEE&_nc_zt=23&_nc_ht=scontent.fmnl45-2.fna&_nc_gid=9IfxG5j4XFdq8zgkb2lUaQ&_nc_ss=7b2a8&oh=00_AQKtT0S6n7P7_KNGQx7tmkbmwbius5C0q4fEaBLp4mDu-Q&oe=6AAF1BE2" alt="Marvelous Faith Academy Logo">
+        </div>
+      </div>
+      <span>Marvelous Faith Academy</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#history">History</a></li>
+      <li><a href="#mission-vision">Mission & Vision</a></li>
+      <li><a href="#hymn">School Hymn</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="student-portal-mfa.html" class="btn"><i class="fas fa-user-graduate" style="margin-right: 6px;"></i>School Portal</a>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-badge"><i class="fas fa-star" style="margin-right: 6px;"></i>Established 2003</span>
+      <h1>Welcome to <span>Marvelous Faith Academy</span></h1>
+      <p>Description</p>
+      <div class="hero-actions">
+        <a href="#history" class="btn"><i class="fas fa-book" style="margin-right: 8px;"></i>Our History</a>
+        <a href="#contact" class="btn btn-outline"><i class="fas fa-phone" style="margin-right: 8px;"></i>Contact Us</a>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-circle">
+        <div class="hero-circle-inner">
+          <img src="https://scontent.fmnl45-2.fna.fbcdn.net/v/t39.30808-6/305389710_1750407355294205_3407545213188990535_n.jpg?stp=dst-jpg_tt6&cstp=mx2000x2000&ctp=s2000x2000&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGC_MRndk0R0l2cZPkQ7MTpoOIqBAlvlXag4ioECW-VdkDECwv3xoGH5Xsb_1f_dyN_jvFF0-omFaLwD8Dtpcz-&_nc_ohc=rDXh2j8wTOAQ7kNvwHpM1Fy&_nc_oc=AdrUJqppFmIIkG6PLNmVJ2NxJsiyEqQ4tWdWmYpy8Dx9haAusbqlbiBWByUKMiVrwEE&_nc_zt=23&_nc_ht=scontent.fmnl45-2.fna&_nc_gid=9IfxG5j4XFdq8zgkb2lUaQ&_nc_ss=7b2a8&oh=00_AQKtT0S6n7P7_KNGQx7tmkbmwbius5C0q4fEaBLp4mDu-Q&oe=6AAF1BE2" alt="Marvelous Faith Academy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  
+    <section id="announcements" style="max-width:1100px;margin:1.5rem auto;padding:0 1rem;">
+      <h2 style="margin-bottom:.8rem;">Announcements</h2>
+      <div id="mfaAnnouncements"><p style="opacity:.7">No announcements at this time.</p></div>
+    </section>
+    <!-- History Section -->
+  <section class="info-section" id="history">
+    <h2 class="section-title">Our <span>History</span></h2>
+    <p class="section-sub">A journey of faith, growth, and service to the Bacoor community.</p>
+
+    <div class="history-grid">
+      <div class="history-text">
+        <p>Marvelous Faith Academy was founded in 2003 </p>
+      </div>
+      <div class="history-highlight">
+        <div class="year">2003</div>
+        <h4>Our Founding Year</h4>
+        <p>Established with 30 preschool students and a vision to provide Christ-centered education in Bacoor, Cavite.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission & Vision Section -->
+  <section class="info-section alt" id="mission-vision">
+    <h2 class="section-title">Mission & <span>Vision</span></h2>
+    <p class="section-sub">Guided by faith, driven by excellence, committed to every child.</p>
+
+    <div class="mv-grid">
+      <!-- Mission Card -->
+      <div class="mv-card">
+        <div class="mv-icon"><i class="fas fa-bullseye"></i></div>
+        <h3>Our Mission</h3>
+        <p id="mfaMission">mission</p>
+      </div>
+
+      <!-- Vision Card -->
+      <div class="mv-card">
+        <div class="mv-icon"><i class="fas fa-eye"></i></div>
+        <h3>Our Vision</h3>
+        <p id="mfaVision">Vision</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SCHOOL HYMN SECTION ===== -->
+  <section class="hymn-section" id="hymn">
+    <div class="hymn-card">
+      <div class="hymn-icon"><i class="fas fa-music"></i></div>
+      <h3>Marvelous Faith Academy Hymn</h3>
+      <p class="hymn-sub">Alma Mater Song</p>
+
+      <div class="hymn-lyrics">
+        <p>
+
+        </p>
+
+        <div class="hymn-divider"></div>
+
+        <p>
+
+        </p>
+
+        <div class="hymn-divider"></div>
+
+        <p>
+
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats / Gold gradient band (SMALLER) -->
+  <section class="stats">
+    <div class="stat-item">
+      <div class="stat-number">23</div>
+      <div class="stat-label">Years</div>
+    </div>
+
+    <!-- Tagline between stats -->
+    <div class="stat-tagline">
+      <span>Keep the Faith Alive!</span>
+    </div>
+
+    <div class="stat-item">
+      <div class="stat-number">500+</div>
+      <div class="stat-label">Students</div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="info-section" id="contact">
+    <h2 class="section-title">Contact <span>Us</span></h2>
+    <p class="section-sub">We'd love to hear from you. Reach out for inquiries, admissions, or a campus visit.</p>
+
+    <div class="mv-grid">
+      <!-- Address Card -->
+      <div class="mv-card">
+        <div class="mv-icon"><i class="fas fa-map-pin"></i></div>
+        <h3>Address</h3>
+        <p>Marvelous Faith Academy, 125 FTM Compound, Mambog 4,<br>Bacoor, Philippines <br> 4102</p>
+      </div>
+
+      <!-- Phone & Email Card -->
+      <div class="mv-card">
+        <div class="mv-icon"><i class="fas fa-phone-alt"></i></div>
+        <h3>Phone & Email</h3>
+        <p>
+          <i class="fas fa-mobile-alt" style="margin-right: 6px;"></i> 0917 123 4567<br>
+          <i class="fas fa-envelope" style="margin-right: 6px;"></i> mfaonline@mfabacoor.net
+        </p>
+      </div>
+
+      <!-- Office Hours Card -->
+      <div class="mv-card">
+        <div class="mv-icon"><i class="fas fa-clock"></i></div>
+        <h3>Office Hours</h3>
+        <p>
+          Monday – Friday: 7:00 AM – 4:00 PM<br>
+          Saturday: 7:00 AM – 4:00 PM<br>
+          Sunday & Holidays: Closed
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <!-- Column 1: Brand -->
+      <div class="footer-col">
+        <div class="footer-logo">
+          <div class="logo-frame lg">
+            <div class="logo-frame-inner">
+              <img src="https://scontent.fmnl45-2.fna.fbcdn.net/v/t39.30808-6/305389710_1750407355294205_3407545213188990535_n.jpg?stp=dst-jpg_tt6&cstp=mx2000x2000&ctp=s2000x2000&_nc_cat=105&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeGC_MRndk0R0l2cZPkQ7MTpoOIqBAlvlXag4ioECW-VdkDECwv3xoGH5Xsb_1f_dyN_jvFF0-omFaLwD8Dtpcz-&_nc_ohc=rDXh2j8wTOAQ7kNvwHpM1Fy&_nc_oc=AdrUJqppFmIIkG6PLNmVJ2NxJsiyEqQ4tWdWmYpy8Dx9haAusbqlbiBWByUKMiVrwEE&_nc_zt=23&_nc_ht=scontent.fmnl45-2.fna&_nc_gid=9IfxG5j4XFdq8zgkb2lUaQ&_nc_ss=7b2a8&oh=00_AQKtT0S6n7P7_KNGQx7tmkbmwbius5C0q4fEaBLp4mDu-Q&oe=6AAF1BE2" alt="Marvelous Faith Academy Logo">
+            </div>
+          </div>
+          <span>Marvelous Faith</span>
+        </div>
+        <p style="color: #b8cef0; margin-top: 1rem; line-height: 1.6;">Nurturing minds, building character, and strengthening faith in Bacoor since 2003.</p>
+      </div>
+
+      <!-- Column 2: Quick Links -->
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#history">Our History</a></li>
+          <li><a href="#mission-vision">Mission & Vision</a></li>
+          <li><a href="#hymn">School Hymn</a></li>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="#" target="_blank">School Portal</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 3: Contact Information -->
+      <div class="footer-col">
+        <h4>Contact Information</h4>
+      <div id="mfaContact"></div>
+        <div class="footer-contact-item">
+          <i class="fas fa-map-pin"></i>
+          <span>Marvelous Faith Academy, 125 FTM Compound, Mambog 4,<br>Bacoor, Philippines, 4102</span>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fas fa-mobile-alt"></i>
+          <a href="tel:+639171234567">0917 123 4567</a>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fas fa-envelope"></i>
+          <a href="mailto:mfaonline@mfabacoor.net">mfaonline@mfabacoor.net</a>
+        </div>
+        <div class="footer-contact-item">
+          <i class="fas fa-clock"></i>
+          <span>Mon–Fri: 7AM–4PM<br>Sat: 7AM–4PM</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Follow Us</h4>
+        <ul>
+          <li>
+            <a href="https://www.facebook.com/MFAofficial2003" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-facebook-f" style="margin-right: 8px;"></i>Facebook
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© 2025 Marvelous Faith Academy of Bacoor. All rights reserved.</span>
+      <div class="social-links">
+        <a href="https://www.facebook.com/MFAofficial2003" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+          <i class="fab fa-facebook-f"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<!-- MFA Admin-managed content -->
+<script>
+(function(){
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+  try{
+    var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');
+    if(!d||!d.site) return;
+    var site=d.site;
+    function set(id,val){var el=document.getElementById(id); if(el && val!=null && val!=='') el.textContent=val;}
+    function setH(id,val){var el=document.getElementById(id); if(el && val!=null && val!=='') el.innerHTML=esc(val).replace(/\n/g,'<br>');}
+    set('mfaHeroTitle', site.heroTitle); set('mfaHeroSub', site.heroSub);
+    set('mfaHistoryTitle', site.historyTitle); setH('mfaHistoryText', site.historyText);
+    setH('mfaMission', site.mission); setH('mfaVision', site.vision);
+    setH('mfaContact', site.contact); setH('mfaHymn', site.hymn); set('mfaFooter', site.footer);
+    var wrap=document.getElementById('mfaAnnouncements');
+    if(wrap && site.announcements){
+      wrap.innerHTML = site.announcements.length ? site.announcements.map(function(a){
+        return '<div class="announcement-item" style="background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.25);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem"><b style="color:#f0d060">'+esc(a.title||'Announcement')+'</b><div style="margin-top:.25rem;opacity:.9">'+esc(a.body||'').replace(/\n/g,'<br>')+'</div><small style="opacity:.6">'+esc(a.date||'')+'</small></div>';
+      }).join('') : '<p style="opacity:.7">No announcements at this time.</p>';
+    }
+    if(site.customCss){var st=document.createElement('style'); st.id='mfaAdminCss'; st.textContent=site.customCss; document.head.appendChild(st);}
+    if(site.customHtml){var dv=document.createElement('div'); dv.id='mfaAdminHtml'; dv.innerHTML=site.customHtml; document.body.appendChild(dv);}
+    if(site.customJs){try{(new Function(site.customJs))()}catch(e){console.warn('Admin custom JS error',e)}}
+  }catch(e){console.warn('MFA admin loader error',e)}
+})();
+</script>
+
+</body>
+</html>
