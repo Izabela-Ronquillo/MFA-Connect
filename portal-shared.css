@@ -2,7 +2,7 @@
 *{margin:0;padding:0;box-sizing:inherit}html{color-scheme:dark}
 body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 10%,#1a3a6e 0%,#0a1f44 55%,#05122b 100%) fixed;color:#fff;line-height:1.5;min-height:100vh}
 .btn{background:var(--gold);color:var(--deep);padding:.72rem 1.3rem;border:0;border-radius:12px;font:700 .93rem 'Inter',sans-serif;cursor:pointer}.btn.o{background:transparent;color:#fff;border:1.5px solid var(--g2)}.btn.sm{padding:.42rem .85rem;font-size:.81rem;border-radius:10px}.btn.ok{background:linear-gradient(135deg,#2ea86a,#6ee7a0);color:#062014}.btn.bad{background:linear-gradient(135deg,#c44,#ff8a8a);color:#2a0808}
-.crest{width:42px;height:42px;border-radius:50%;background:var(--gold);padding:3px;flex-shrink:0}.crest i{display:flex;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 30%,#1a3a6e,#05122b);align-items:center;justify-content:center;font:800 .8rem 'Inter';font-style:normal;color:var(--g3)}
+.crest{width:42px;height:42px;border-radius:50%;overflow:hidden;background:var(--gold);padding:3px;flex-shrink:0}.crest img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}
 .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
 .side{position:sticky;top:0;height:100vh;background:rgba(5,18,43,.96);border-right:3px solid var(--g2);padding:1.1rem .85rem;display:flex;flex-direction:column;gap:.28rem;overflow:auto}
 .brand{display:flex;align-items:center;gap:.6rem;font-weight:800;line-height:1.15;margin-bottom:1rem;padding:0 .3rem}
