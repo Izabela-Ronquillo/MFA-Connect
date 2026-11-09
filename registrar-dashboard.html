@@ -25,9 +25,7 @@ function saveAssign(){var sid=$('as_st').value,sub=$('as_sub').value.trim(),tc=$
 function delAssign(id){DB.teacherAssignments=DB.teacherAssignments.filter(function(a){return a.id!==id});saveDB();flash('Assignment removed.');r_assign()}
 function addDoc(){var sid=$('d_st').value,stu=acctById(sid);if(!stu){flash('Select a student.','err');return}DB.documents.unshift({id:++DB._seq,studentId:sid,student:stu.name,type:$('d_ty').value,status:$('d_sts').value.trim()||'On file',date:today()});saveDB();flash('Document record saved.');r_docs()}
 function delDoc(id){DB.documents=DB.documents.filter(function(d){return d.id!==id});saveDB();r_docs()}
-var VIEWS={r_home:r_home,r_validate:r_validate,r_docs:r_docs,r_assign:r_assign};$('d_st').value,stu=acctById(sid);if(!stu){flash('Select a student.','err');return}DB.documents.unshift({id:++DB._seq,studentId:sid,student:stu.name,type:$('d_ty').value,status:$('d_sts').value.trim()||'On file',date:today()});saveDB();flash('Document record saved.');r_docs()}
-function delDoc(id){DB.documents=DB.documents.filter(function(d){return d.id!==id});saveDB();r_docs()}
-var VIEWS={r_home:r_home,r_validate:r_validate,r_docs:r_docs};
+var VIEWS={r_home:r_home,r_validate:r_validate,r_docs:r_docs,r_assign:r_assign};
 $('out').onclick=signOut;
 if(checkSession('registrar'))buildShell();
 </script></body></html>
