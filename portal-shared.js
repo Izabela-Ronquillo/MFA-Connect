@@ -14,7 +14,7 @@ var DEFAULT={school:{name:'Marvelous Faith Academy',tagline:'Keep the Faith Aliv
  grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}},
  teacherSched:[['7:30 \u2013 8:30 AM','Mathematics 8','Grade 8 \u2013 St. Matthew','Rm 201','Mon \u2013 Fri'],['8:30 \u2013 9:30 AM','Math Remediation','Grade 8 \u2013 St. Mark','Rm 202','Tue \u00B7 Thu']],
  gradeQueue:[{id:1,studentId:'2023-0142',student:'Juan Miguel Dela Cruz',subject:'Mathematics',quarter:2,grade:87,teacher:'Mr. Roberto Garcia',status:'pending',sy:'2025\u20132026'}],
- documents:[{id:1,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Registration Form',status:'On file',date:'Jun 5, 2025'},{id:2,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Certificate of Enrollment',status:'Available on request',date:'Jun 10, 2025'}],_seq:10};
+ documents:[{id:1,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Registration Form',status:'On file',date:'Jun 5, 2025'},{id:2,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Certificate of Enrollment',status:'Available on request',date:'Jun 10, 2025'}],teacherAssignments:[],_seq:10};
 function loadDB(){try{var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');if(d&&d.accounts)return d}catch(e){}return JSON.parse(JSON.stringify(DEFAULT))}
 function saveDB(){localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}
 var DB=loadDB(),me=null,sDay=null;
