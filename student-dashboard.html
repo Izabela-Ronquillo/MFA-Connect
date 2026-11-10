@@ -20,34 +20,23 @@
     <div id="views"></div>
   </main>
 </section>
+<script src="portal-shared.js"></script>
 <script>
 var D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],FD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var $=function(id){return document.getElementById(id)};
 var peso=function(n){return '\u20B1'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})};
-var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[m]})};
 function onDay(s,d){var m=s.match(/(\w{3}) \u2013 (\w{3})/);if(m){var a=D.indexOf(m[1]),b=D.indexOf(m[2]);if(a>=0&&b>=0)return d>=a&&d<=b}return s.indexOf(D[d])>=0}
 function v(g){return g==null?'<span class="na">\u2013</span>':esc(g)}
-var DEFAULT={accounts:[{id:'2023-0142',pw:'temp1234',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mrs. Maria Santos'}],
-students:{'2023-0142':{sched:[['7:30 \u2013 8:30 AM','Filipino','Mon \u00B7 Wed \u00B7 Fri','Rm 201','Mrs. Reyes'],['8:30 \u2013 9:30 AM','Mathematics','Mon \u2013 Fri','Rm 201','Mr. Garcia'],['9:45 \u2013 10:45 AM','Science','Mon \u00B7 Tue \u00B7 Thu','Science Lab','Ms. Villanueva'],['10:45 \u2013 11:45 AM','English','Mon \u2013 Fri','Rm 201','Mrs. Cruz'],['1:00 \u2013 2:00 PM','Araling Panlipunan','Tue \u00B7 Thu','Rm 201','Mr. Bautista'],['2:00 \u2013 3:00 PM','MAPEH','Wed \u00B7 Fri','Gym','Coach Ramos'],['3:00 \u2013 4:00 PM','Christian Living','Tue','Chapel','Pastor Lim']],
-att:[['Nov 3','Present'],['Oct 31','Present'],['Oct 30','Late'],['Oct 29','Present'],['Oct 28','Present'],['Oct 27','Absent'],['Oct 24','Present'],['Oct 23','Present'],['Oct 22','Present'],['Oct 21','Late']],
-fees:{total:42500,pay:[['Jun 10, 2025','OR-004512','Enrollment / Downpayment',15000],['Aug 5, 2025','OR-004877','Monthly Installment',5500],['Sep 8, 2025','OR-005103','Monthly Installment',5500],['Oct 6, 2025','OR-005390','Monthly Installment',5500]]},
-grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}}};
-function loadDB(){try{var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');if(d&&d.accounts)return d}catch(e){}return JSON.parse(JSON.stringify(DEFAULT))}
-function saveDB(){localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}
-var DB=loadDB(),me=null,sDay=null;
-function acctById(id){return DB.accounts.find(function(a){return a.id===id})}
-function ensureStudent(id){if(!DB.students[id])DB.students[id]={sched:[],att:[],fees:{total:0,pay:[]},grades:{}};return DB.students[id]}
-function openView(v){document.querySelectorAll('.nv').forEach(function(x){x.classList.toggle('on',x.dataset.v===v)});VIEWS[v]()}
-function setMain(t,s,h){$('ttl').textContent=t;$('subh').textContent=s||'';$('views').innerHTML=h}
-function ban(){return '<div class="c ban s6"><h3>STUDENT</h3><h2>'+esc(me.name)+'</h2><p>'+esc(me.level||'')+'</p><p>'+esc(me.adviser?'Adviser: '+me.adviser:'')+'</p></div>'}
+
 var NAV=[['s_home','\u2302','Overview'],['s_grades','\u2605','Grades'],['s_sched','\u25F7','Schedule'],['s_att','\u2713','Attendance'],['s_pay','\u20B1','Balances']];
 function buildShell(){$('mn').textContent=me.name;$('mr').textContent='Student';$('mid').textContent=me.id;$('nav').innerHTML=NAV.map(function(n,i){return '<button class="nv'+(i===0?' on':'')+'" data-v="'+n[0]+'"><b>'+n[1]+'</b>'+n[2]+'</button>'}).join('');$('nav').onclick=function(e){var b=e.target.closest('.nv');if(b)openView(b.dataset.v)};openView(NAV[0][0])}
 function s_home(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
- var bars=rows.map(function(r){var g=[r[1],r[2],r[3],r[4]].filter(function(x){return x!=null}).pop();return '<div class="bar"><span>'+esc(r[0])+'</span><div class="trk"><i style="width:'+(g||0)+'%"></i></div><b>'+v(g)+'</b></div>'}).join('')||'<p class="none">No released grades yet.</p>';
- var paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),rem=(st.fees.total||0)-paid,pc=st.fees.total?Math.round(paid/st.fees.total*100):0;
- var w=new Date().getDay(),td=w>=1&&w<=5?w:1,sched=getStudentSchedule(me.id).filter(function(x){return onDay(x[2],td)}),att=st.att||[];
- function c(s){return att.filter(function(a){return a[1]===s}).length}
- setMain('Hello, '+me.name.split(' ')[0]+'!','Student dashboard','<div class="bento">'+ban()+'<div class="c s2"><h3>Balance</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div><div class="big">'+peso(rem)+'</div><div class="cap">remaining</div></div><div class="c s4"><h3>Latest released grades</h3>'+bars+'</div><div class="c s2"><h3>Attendance</h3><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div></div><div class="c s6"><h3>'+FD[td]+' schedule</h3><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div></div>')}
+  var bars=rows.map(function(r){var g=[r[1],r[2],r[3],r[4]].filter(function(x){return x!=null}).pop();return '<div class="bar"><span>'+esc(r[0])+'</span><div class="trk"><i style="width:'+(g||0)+'%"></i></div><b>'+v(g)+'</b></div>'}).join('')||'<p class="none">No released grades yet.</p>';
+  var paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),rem=(st.fees.total||0)-paid,pc=st.fees.total?Math.round(paid/st.fees.total*100):0;
+  var w=new Date().getDay(),td=w>=1&&w<=5?w:1,sched=getStudentSchedule(me.id).filter(function(x){return onDay(x[2],td)}),att=st.att||[];
+  function c(s){return att.filter(function(a){return a[1]===s}).length}
+  setMain('Hello, '+me.name.split(' ')[0]+'!','Student dashboard','<div class="bento">'+ban()+'<div class="c s2"><h3>Balance</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div><div class="big">'+peso(rem)+'</div><div class="cap">remaining</div></div><div class="c s4"><h3>Latest released grades</h3>'+bars+'</div><div class="c s2"><h3>Attendance</h3><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div></div><div class="c s6"><h3>'+FD[td]+' schedule</h3><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div></div>')}
 function s_grades(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
   var quarters=['Q1','Q2','Q3','Q4','Final'];
   var selectedQ=(window.__selQ!==undefined?window.__selQ:4);
@@ -68,14 +57,11 @@ function s_sched(){var st=DB.students[me.id]||ensureStudent(me.id),w=new Date().
   setMain('Class Schedule',me.level||'','<div class="chips noprint">'+chips+'</div><div class="c"><div class="tl2">'+(list.length?list.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div>')}
 function getStudentSchedule(sid){var st=DB.students[sid]||ensureStudent(sid);var base=st.sched||[];var assigned=(DB.teacherAssignments||[]).filter(function(a){return a.studentId===sid}).map(function(a){return [a.time||'',a.subject||'',(a.days||[]).join(' \u00B7 '),a.room||'',a.teacher||'']});return base.concat(assigned)}
 function s_att(){var st=DB.students[me.id]||ensureStudent(me.id),att=st.att||[];function c(s){return att.filter(function(a){return a[1]===s}).length}
- setMain('Attendance',me.level||'','<div class="c"><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div><div class="pg">'+(att.map(function(a){return '<div class="pill '+a[1][0]+'"><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div>'}).join('')||'<p class="none">No records.</p>')+'</div></div>')}
+  setMain('Attendance',me.level||'','<div class="c"><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div><div class="pg">'+(att.map(function(a){return '<div class="pill '+a[1][0]+'"><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div>'}).join('')||'<p class="none">No records.</p>')+'</div></div>')}
 function s_pay(){var st=DB.students[me.id]||ensureStudent(me.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),total=st.fees.total||0,rem=total-paid,pc=total?Math.round(paid/total*100):0;
- setMain('Balances & Payments','Recorded by the cashier','<div class="bento"><div class="c s2"><h3>Paid</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div></div><div class="c s4"><h3>Summary</h3><div class="sum"><div><b>'+peso(total)+'</b><span>Total fees</span></div><div><b style="color:var(--ok)">'+peso(paid)+'</b><span>Paid</span></div><div><b style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</b><span>Remaining</span></div></div></div><div class="c s6"><h3>Recent payment transactions</h3><div class="tl2">'+([].concat(st.fees.pay||[]).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join('')||'<p class="none">No transactions.</p>')+'</div></div></div>')}
+  setMain('Balances & Payments','Recorded by the cashier','<div class="bento"><div class="c s2"><h3>Paid</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div></div><div class="c s4"><h3>Summary</h3><div class="sum"><div><b>'+peso(total)+'</b><span>Total fees</span></div><div><b style="color:var(--ok)">'+peso(paid)+'</b><span>Paid</span></div><div><b style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</b><span>Remaining</span></div></div></div><div class="c s6"><h3>Recent payment transactions</h3><div class="tl2">'+([].concat(st.fees.pay||[]).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join('')||'<p class="none">No transactions.</p>')+'</div></div></div>')}
 var VIEWS={s_home:s_home,s_grades:s_grades,s_sched:s_sched,s_att:s_att,s_pay:s_pay};
-function checkSession(){try{var s=JSON.parse(sessionStorage.getItem('mfa_session')||'null');if(!s||s.role!=='student'){location.href='student-portal-mfa.html';return false}var a=acctById(s.id);if(!a||a.role!=='student'){location.href='student-portal-mfa.html';return false}me=a;return true}catch(e){location.href='student-portal-mfa.html';return false}}
-$('out').onclick=function(){sessionStorage.removeItem('mfa_session');location.href='student-portal-mfa.html'};
-if(checkSession()) buildShell();
+if(checkSession('student')) buildShell();
 </script>
-<script src="portal-shared.js"></script>
 </body>
 </html>

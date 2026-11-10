@@ -14,48 +14,12 @@
   <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div></aside>
   <main><div class="hd"><div><h2 id="ttl">Loading…</h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div><div id="flash"></div><div id="views"></div></main>
 </section>
+<script src="portal-shared.js"></script>
 <script>
 /* ---- on-screen error reporting ---- */
 window.onerror=function(msg,src,line){var b=document.getElementById('errbar');b.style.display='block';b.textContent+='Error: '+msg+' (line '+line+')\n'};
 
-/* ---- helpers ---- */
 var LOGIN='student-portal-mfa.html';
-var $=function(id){return document.getElementById(id)};
-var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
-var mem={};
-function sget(st,k){try{return window[st].getItem(k)}catch(e){return mem[st+k]||null}}
-function sset(st,k,v){try{window[st].setItem(k,v)}catch(e){mem[st+k]=v}}
-function sdel(st,k){try{window[st].removeItem(k)}catch(e){delete mem[st+k]}}
-function flash(msg,type){var el=$('flash');el.innerHTML=msg?'<div class="msg '+(type||'ok')+'">'+esc(msg)+'</div>':'';if(msg)setTimeout(function(){el.innerHTML=''},3500)}
-
-/* ---- data ---- */
-var DEFAULT={school:{name:'Marvelous Faith Academy',tagline:'Keep the Faith Alive!'},
- accounts:[{id:'admin-001',pw:'admin123',role:'admin',name:'Ms. Angela Reyes',first:false},{id:'registrar-001',pw:'registrar123',role:'registrar',name:'Mrs. Liza Bautista',first:false},{id:'cashier-001',pw:'cashier123',role:'cashier',name:'Mr. Carlo Santos',first:false},{id:'teacher-001',pw:'teacher123',role:'teacher',name:'Mr. Roberto Garcia',subject:'Mathematics',first:false},{id:'2023-0142',pw:'temp1234',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mr. Roberto Garcia',first:false}],
- students:{},
- teacherSched:[['7:30 \u2013 8:30 AM','Mathematics 8','Grade 8 \u2013 St. Matthew','Rm 201','Mon \u2013 Fri'],['8:30 \u2013 9:30 AM','Math Remediation','Grade 8 \u2013 St. Mark','Rm 202','Tue \u00B7 Thu']],
- gradeQueue:[{id:1,studentId:'2023-0142',student:'Juan Miguel Dela Cruz',subject:'Mathematics',quarter:2,grade:87,teacher:'Mr. Roberto Garcia',status:'pending',sy:'2025\u20132026'}],
- documents:[],teacherAssignments:[],_seq:10};
-function loadDB(){
-  var base=JSON.parse(JSON.stringify(DEFAULT)),d=null;
-  try{d=JSON.parse(sget('localStorage','mfa_portal_db')||'null')}catch(e){}
-  if(!d||!d.accounts)return base;
-  for(var k in base){if(d[k]==null)d[k]=base[k]}
-  base.accounts.forEach(function(a){if(!d.accounts.some(function(x){return x.id===a.id}))d.accounts.push(a)});
-  return d;
-}
-function saveDB(){sset('localStorage','mfa_portal_db',JSON.stringify(DB))}
-var DB=loadDB(),me=null;
-function acctById(id){for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===id)return DB.accounts[i]}return null}
-
-/* ---- shell ---- */
-function setMain(t,s,h){$('ttl').textContent=t;$('subh').textContent=s||'';$('views').innerHTML=h}
-function ban(){return '<div class="c ban s6"><h3>'+esc(me.role.toUpperCase())+'</h3><h2>'+esc(me.name)+'</h2><p>'+esc(me.subject||DB.school.name)+'</p><p>'+esc(DB.school.tagline||'')+'</p></div>'}
-function openView(v){
-  var els=document.querySelectorAll('.nv');
-  for(var i=0;i<els.length;i++)els[i].classList.toggle('on',els[i].getAttribute('data-v')===v);
-  try{VIEWS[v]()}catch(e){setMain('Error','','<div class="c"><div class="msg err">'+esc(e.message)+'</div></div>')}
-}
-function signOut(){sdel('sessionStorage','mfa_session');location.href=LOGIN}
 
 /* ---- teacher views ---- */
 var NAV=[['t_home','\u2302','Overview'],['t_sched','\u25F7','Schedule'],['t_upload','\u2605','Upload Grades'],['t_attend','\u2713','Attendance'],['t_advise','\u2605','My Advised Students']];
@@ -114,7 +78,7 @@ $('out').onclick=signOut;
 $('nav').innerHTML=NAV.map(function(n,i){return '<button class="nv'+(i===0?' on':'')+'" data-v="'+n[0]+'"><b>'+n[1]+'</b>'+n[2]+'</button>'}).join('');
 $('nav').onclick=function(e){var b=e.target;while(b&&b!==this&&!b.classList.contains('nv'))b=b.parentNode;if(b&&b.classList.contains('nv'))openView(b.getAttribute('data-v'))};
 
-var sess=null;try{sess=JSON.parse(sget('sessionStorage','mfa_session')||'null')}catch(e){}
+var sess=null;try{sess=JSON.parse(sessionStorage.getItem('mfa_session')||'null')}catch(e){}
 var acct=sess&&acctById(sess.id);
 function startPortal(){
   me=acct;$('mn').textContent=me.name;$('mr').textContent='Teacher';$('mid').textContent=me.id;
@@ -131,13 +95,12 @@ function changePw(){
 if(acct&&acct.role==='teacher'&&acct.first){
   $('mn').textContent=acct.name;$('mr').textContent='Teacher';$('mid').textContent=acct.id;
   $('nav').style.display='none';
-  setMain('Set Your Password','You are using a temporary password. Create a new one to continue.','<div class="c" style="max-width:520px"><h3>Change password</h3><div class="row"><div><label>New password</label><input id="np1" type="password" placeholder="At least 8 characters"></div><div><label>Confirm new password</label><input id="np2" type="password" placeholder="Re-enter password"></div></div><button class="btn sm" onclick="changePw()">Save &amp; Continue</button></div>');
+  setMain('Set Your Password','You are using a temporary password. Create a new one to continue.','<div class="c" style="max-width:520px"><h3>Change password</h3><div class="row"><div><label>New password</label><input id="np1" type="password" placeholder="At least 8 characters"></div><div><label>Confirm new password</label><input id="np2" type="password" placeholder="Re-enter password"></div></div><button class="btn sm" onclick="changePw()">Save & Continue</button></div>');
 }else if(acct&&acct.role==='teacher'){
   startPortal();
 }else{
   setMain('Not signed in','','<div class="c"><div class="msg err">No teacher session found (session: '+esc(JSON.stringify(sess))+'). Sign in as a teacher from <a href="'+LOGIN+'" style="color:#f0d060">'+LOGIN+'</a> (teacher-001 / teacher123).</div></div>');
 }
 </script>
-<script src="portal-shared.js"></script>
 </body>
 </html>
