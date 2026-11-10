@@ -118,6 +118,13 @@
       top: 0;
       z-index: 100;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .navbar.hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+      pointer-events: none;
     }
 
     .logo {
@@ -761,6 +768,42 @@
       }
     }
 
+    /* Scroll to top button */
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #b8860b, #d4af37, #f0d060);
+      color: #05122b;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      z-index: 99;
+    }
+
+    .scroll-top-btn.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .scroll-top-btn:hover {
+      background: linear-gradient(135deg, #d4af37, #f0d060, #fdf0a0);
+      box-shadow: 0 10px 30px rgba(212, 175, 55, 0.6);
+      transform: translateY(-3px);
+    }
+
     @media (max-width: 900px) {
       .hero h1 {
         font-size: 2.8rem;
@@ -1075,6 +1118,11 @@
     </div>
   </footer>
 
+  <!-- Scroll to top button -->
+  <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
 </div>
 
 <!-- MFA Admin-managed content -->
@@ -1102,7 +1150,52 @@
     if(site.customJs){try{(new Function(site.customJs))()}catch(e){console.warn('Admin custom JS error',e)}}
   }catch(e){console.warn('MFA admin loader error',e)}
 })();
-</script>
+  </script>
 
+  <!-- Navbar hide/show & scroll-to-top -->
+  <script>
+  (function(){
+    var navbar = document.querySelector('.navbar');
+    var scrollTopBtn = document.getElementById('scrollTopBtn');
+    var lastScrollY = window.scrollY;
+    var ticking = false;
+
+    function onScroll() {
+      var currentScrollY = window.scrollY;
+
+      // Navbar hide/show
+      if (currentScrollY > 100) {
+        if (currentScrollY > lastScrollY) {
+          navbar.classList.add('hidden');
+        } else {
+          navbar.classList.remove('hidden');
+        }
+      } else {
+        navbar.classList.remove('hidden');
+      }
+
+      // Scroll to top button visibility
+      if (currentScrollY > 300) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        window.requestAnimationFrame(onScroll);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    scrollTopBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  })();
+  </script>
 </body>
 </html>
