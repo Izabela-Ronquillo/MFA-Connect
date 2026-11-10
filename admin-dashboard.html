@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -9,97 +9,228 @@
 </head>
 <body>
 <section id="dash" class="app">
-  <aside class="side"><div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div><nav id="nav"></nav>
-  <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out">Sign Out</button></div></aside>
-  <main><div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" onclick="window.print()">Print</button></div><div id="flash"></div><div id="views"></div></main>
+  <aside class="side">
+    <div class="brand"><div class="crest"><i>MFA</i></div><span>Marvelous<br>Faith Academy</span></div>
+    <nav id="nav"></nav>
+    <div class="me"><b id="mn"></b><div class="role" id="mr"></div><span id="mid"></span><button class="btn o sm" id="out" type="button">Sign Out</button></div>
+  </aside>
+  <main>
+    <div class="hd"><div><h2 id="ttl"></h2><p id="subh"></p></div><button class="btn o sm noprint" type="button" onclick="window.print()">Print</button></div>
+    <div id="flash"></div>
+    <div id="views"></div>
+  </main>
 </section>
 <script src="portal-shared.js"></script>
 <script>
-var NAV=[['a_home','\u2302','Overview'],['a_accounts','\u263A','Accounts'],['a_school','\u270E','School Info'],['a_site','\u25A1','Website (index.html)']];
-function a_home(){setMain('Admin Dashboard','Manage accounts and school information','<div class="bento">'+ban()+'<div class="c s3"><h3>Total accounts</h3><div class="big">'+DB.accounts.length+'</div></div><div class="c s3"><h3>Pending grades</h3><div class="big">'+DB.gradeQueue.filter(function(g){return g.status==='pending'}).length+'</div></div><div class="c s3"><h3>Announcements</h3><div class="big">'+((DB.site&&DB.site.announcements||[]).length)+'</div></div><div class="c s6"><h3>School info</h3><p><b>'+esc(DB.school.name)+'</b> \u2014 '+esc(DB.school.tagline)+'</p><p class="none" style="margin-top:.3rem">'+esc(DB.school.address)+' \u00B7 '+esc(DB.school.phone)+' \u00B7 '+esc(DB.school.email)+'</p></div></div>')}
-function a_accounts(){var roles=['student','teacher','registrar','cashier','admin'];var teachers=DB.accounts.filter(function(a){return a.role==='teacher'});var advOpts=teachers.map(function(t){return '<option value="'+esc(t.name)+'">'+esc(t.name)+' ('+esc(t.subject||'General')+')</option>'}).join('')||'<option value="">No teachers available</option>';var roleOrder={admin:0,teacher:1,registrar:2,cashier:3,student:4};var roleLabels={admin:'Administrators',teacher:'Teachers',registrar:'Registrars',cashier:'Cashiers',student:'Students'};var filterHtml='<div class="row" style="margin-bottom:1rem"><div><label>Filter by Role</label><select id="roleFilter" onchange="a_accounts()"><option value="">All Roles</option>'+roles.map(function(r){return '<option value="'+r+'"'+(window.currentRoleFilter===r?' selected':'')+'>'+roleLabels[r]+'</option>'}).join('')+'</select></div></div>';var sorted=DB.accounts.slice().sort(function(a,b){return (roleOrder[a.role]||99)-(roleOrder[b.role]||99)||a.name.localeCompare(b.name)});if(window.currentRoleFilter){sorted=sorted.filter(function(a){return a.role===window.currentRoleFilter})}var grouped={};sorted.forEach(function(a){if(!grouped[a.role])grouped[a.role]=[];grouped[a.role].push(a)});var tables=Object.keys(roleOrder).sort(function(a,b){return roleOrder[a]-roleOrder[b]}).map(function(r){var list=grouped[r]||[];if(!list.length)return '';return '<div class="c" style="margin-top:1rem"><h4 style="color:var(--g3);margin-bottom:.5rem">'+roleLabels[r]+' ('+list.length+')</h4><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>Role</th><th class="noprint">Adviser/Subject</th><th class="noprint">Reset PW</th><th class="noprint">Remove</th></tr></thead><tbody>'+list.map(function(a){var adv='';if(a.role==='student'&&a.adviser)adv=esc(a.adviser);else if(a.role==='teacher')adv=esc(a.subject||'General');return '<tr><td><b>'+esc(a.id)+'</b></td><td>'+esc(a.name)+'</td><td><span class="tag '+(a.role==='admin'?'ok':'pend')+'">'+esc(a.role)+'</span></td><td class="noprint">'+adv+'</td><td class="noprint"><button class="btn sm o" onclick="resetPw(\''+esc(a.id)+'\')">Reset</button></td><td class="noprint">'+(a.id===me.id?'—':'<button class="btn sm bad" onclick="delAcct(\''+esc(a.id)+'\')">Remove</button>')+'</td></tr>'}).join('')+'</tbody></table></div>'}).join('');window.currentRoleFilter=$('roleFilter')?$('roleFilter').value:'';setMain('Account Management','Create and manage all portal accounts','<div class="c"><h3>Create account</h3><div class="row"><div><label>ID / Username</label><input id="n_id" placeholder="e.g. 2026-0001"></div><div><label>Full name</label><input id="n_nm"></div><div><label>Role</label><select id="n_rl" onchange="toggleStudentFields()">'+roles.map(function(r){return '<option>'+r+'</option>'}).join('')+'</select></div><div><label>Temp password</label><input id="n_pw" value="temp1234"></div></div><div class="row" id="studentFields"><div><label>Level/Section (e.g. Grade 8 – St. Matthew)</label><input id="n_ex" placeholder="e.g. Grade 8 – St. Matthew"></div><div><label>Adviser (Teacher)</label><select id="n_adv">'+advOpts+'</select></div></div><button class="btn sm" onclick="addAcct()">Create Account</button></div>'+filterHtml+'<div class="c" style="margin-top:1rem"><h3>All accounts</h3>'+tables+'</div></div>')}function addAcct(){var id=$('n_id').value.trim(),name=$('n_nm').value.trim(),role=$('n_rl').value,pw=$('n_pw').value||'temp1234',ex=$('n_ex').value.trim(),adv=$('n_adv').value;if(!id||!name){flash('ID and name are required.','err');return}if(acctById(id)){flash('That ID already exists.','err');return}var a={id:id,pw:pw,role:role,name:name,first:pw==='temp1234'};if(role==='student'){a.level=ex||'Unassigned';a.sy='2025–2026';a.adviser=adv||'';ensureStudent(id)}else if(role==='teacher'){a.subject=ex||'General'}DB.accounts.push(a);saveDB();flash('Account created.');a_accounts()}function toggleStudentFields(){var role=$('n_rl').value,$sf=$('studentFields');$sf.style.display=role==='student'?'flex':'none'}function resetPw(id){var a=acctById(id);if(!a)return;a.pw='temp1234';a.first=true;saveDB();flash('Password reset to temp1234.');a_accounts()}
-function delAcct(id){if(id===me.id)return;DB.accounts=DB.accounts.filter(function(a){return a.id!==id});saveDB();flash('Account removed.');a_accounts()}
-function a_school(){var s=DB.school||{name:'',tagline:'',address:'',phone:'',email:'',about:''};
- setMain('School Information','Edit the school details used across the portal','\
-<div class="stack">\
-  <div class="c s6">\
-    <div class="ws-head">\
-      <div><h3 style="margin-bottom:.35rem">School details</h3><div class="ws-meta">These details are stored in the portal database and shown in dashboards/portal UI.</div></div>\
-    </div>\
-    <div class="grid2">\
-      <div class="subcard"><h4>Identity</h4>\
-        <div class="field"><label>School name</label><input id="sc_nm" value="'+esc(s.name||'')+'"></div>\
-        <div class="field"><label>Tagline</label><input id="sc_tg" value="'+esc(s.tagline||'')+'"></div>\
-        <div class="field"><label>About</label><textarea id="sc_ab" style="min-height:140px">'+esc(s.about||'')+'</textarea></div>\
-      </div>\
-      <div class="subcard"><h4>Contact & Location</h4>\
-        <div class="field"><label>Address</label><textarea id="sc_ad" style="min-height:90px">'+esc(s.address||'')+'</textarea></div>\
-        <div class="field"><label>Phone</label><input id="sc_ph" value="'+esc(s.phone||'')+'" placeholder="e.g. (02) 8123-4567"></div>\
-        <div class="field"><label>Email</label><input id="sc_em" type="email" value="'+esc(s.email||'')+'" placeholder="e.g. info@mfa.edu.ph"></div>\
-      </div>\
-    </div>\
-    <div class="toolbar noprint" style="margin-top:.9rem"><button class="btn sm" onclick="saveSchool()">Save School Info</button></div>\
-    <div class="note" style="margin-top:.85rem">This is a local demo using <code>localStorage</code>. In production, save these changes through a backend so the public website and portal stay in sync.</div>\
-  </div>\
-</div>')}
-function saveSchool(){DB.school={name:$('sc_nm').value.trim()||DB.school.name,tagline:$('sc_tg').value.trim(),address:$('sc_ad').value.trim(),phone:$('sc_ph').value.trim(),email:$('sc_em').value.trim(),about:$('sc_ab').value.trim()};saveDB();flash('School information saved.');a_school()}
-var VIEWS={a_home:a_home,a_accounts:a_accounts,a_school:a_school,a_site:a_site};
-
-function ensureSite(){if(!DB.site)DB.site={};var s=DB.site;
- var defs={heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',about:'',footer:'',customHtml:'',customCss:'',customJs:'',announcements:[],indexHtml:''};
- for(var k in defs){if(s[k]==null)s[k]=defs[k]} if(!s.announcements)s.announcements=[]; return s}
-function a_site(){var site=ensureSite();
- var ann=site.announcements.map(function(a,i){return '<tr><td><b>'+esc(a.title||'')+'</b><div class="none" style="margin-top:.15rem">'+esc((a.body||'').slice(0,90))+((a.body||'').length>90?'â€¦':'')+'</div></td><td>'+esc(a.date||'')+'</td><td class="noprint"><div class="acts"><button class="btn sm o" onclick="editAnn('+i+')">Edit</button><button class="btn sm bad" onclick="delAnn('+i+')">Delete</button></div></td></tr>'}).join('')||'<tr><td colspan="3" class="na">No announcements yet.</td></tr>';
- setMain('Edit Website','Manage index.html content and announcements','\
-<div class="stack">\
-  <div class="c s6">\
-    <div class="ws-head">\
-      <div><h3 style="margin-bottom:.35rem">Structured content</h3><div class="ws-meta">Edit the main website sections. Changes are saved locally and applied by index.html in this browser.</div></div>\
-      <div class="toolbar noprint"><a class="btn sm o" href="index.html" target="_blank">Open index.html</a></div>\
-    </div>\
-    <div class="grid2">\
-      <div class="subcard"><h4>Hero & History</h4>\
-        <div class="field"><label>Hero title</label><input id="si_ht" value="'+esc(site.heroTitle||'')+'"></div>\
-        <div class="field"><label>Hero subtitle</label><input id="si_hs" value="'+esc(site.heroSub||'')+'"></div>\
-        <div class="field"><label>History title</label><input id="si_hist" value="'+esc(site.historyTitle||'')+'"></div>\
-        <div class="field"><label>History text</label><textarea id="si_his">'+esc(site.historyText||'')+'"></textarea></div>\
-      </div>\
-      <div class="subcard"><h4>Mission, Vision & Contact</h4>\
-        <div class="field"><label>Mission</label><textarea id="si_mis">'+esc(site.mission||'')+'"></textarea></div>\
-        <div class="field"><label>Vision</label><textarea id="si_vis">'+esc(site.vision||'')+'"></textarea></div>\
-        <div class="field"><label>Contact info</label><textarea id="si_con">'+esc(site.contact||'')+'</textarea></div>\
-      </div>\
-    </div>\
-    <div class="toolbar noprint" style="margin-top:.85rem"><button class="btn sm" onclick="saveSite()">Save Website Content</button></div>\
-  </div>\
-  <div class="c s6">\
-    <h3>Announcements</h3>\
-    <div class="subcard">\
-      <div class="grid2">\
-        <div class="field"><label>Title</label><input id="an_t" placeholder="Announcement title"></div>\
-        <div class="field"><label>Date</label><input id="an_d" placeholder="e.g. Nov 6, 2026"></div>\
-      </div>\
-      <div class="field"><label>Body</label><textarea id="an_b" placeholder="Announcement details"></textarea></div>\
-      <div class="toolbar noprint"><button class="btn sm" id="an_btn" onclick="addAnn()">Add Announcement</button><button class="btn sm o" id="an_can" style="display:none" onclick="cancelAnn()">Cancel</button></div>\
-    </div>\
-    <table class="tbl" style="margin-top:.9rem"><thead><tr><th>Announcement</th><th style="width:140px">Date</th><th style="width:170px" class="noprint">Actions</th></tr></thead><tbody>'+ann+'</tbody></table>\
-  </div>\
-</div>');}
+var NAV=[['a_home','\u2302','Overview'],['a_accounts','\u263A','Accounts'],['a_school','\u270E','School Info'],['a_site','\u25A1','Website']];
 var _annEdit=-1;
-function saveSite(){var site=ensureSite();
- site.heroTitle=$('si_ht').value;site.heroSub=$('si_hs').value;site.historyTitle=$('si_hist').value;site.historyText=$('si_his').value;
- site.mission=$('si_mis').value;site.vision=$('si_vis').value;site.contact=$('si_con').value;
- saveDB();flash('Website content saved. Refresh index.html to see changes.')}
-function loadIndexOverride(){var site=ensureSite();}
 
-function addAnn(){var site=ensureSite(),t=$('an_t').value.trim(),d=$('an_d').value.trim(),b=$('an_b').value.trim();if(!t){flash('Announcement title is required.','err');return}
- var obj={title:t,date:d||today(),body:b};
- if(_annEdit>=0){site.announcements[_annEdit]=obj;_annEdit=-1;flash('Announcement updated.');} else {site.announcements.unshift(obj);flash('Announcement added.');}
- saveDB();a_site();}
-function editAnn(i){var site=ensureSite(),a=site.announcements[i];if(!a)return;_annEdit=i;$('an_t').value=a.title||'';$('an_d').value=a.date||'';$('an_b').value=a.body||'';$('an_btn').textContent='Update Announcement';$('an_can').style.display='inline-block';window.scrollTo(0,0)}
-function cancelAnn(){_annEdit=-1;$('an_t').value='';$('an_d').value='';$('an_b').value='';$('an_btn').textContent='Add Announcement';$('an_can').style.display='none'}
-function delAnn(i){var site=ensureSite();site.announcements.splice(i,1);saveDB();flash('Announcement deleted.');a_site()}
+function ensureSite(){
+  if(!DB.site||typeof DB.site!=='object') DB.site={};
+  var defs={heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',footer:'',announcements:[]};
+  for(var k in defs){ if(DB.site[k]==null) DB.site[k]=defs[k]; }
+  if(!Array.isArray(DB.site.announcements)) DB.site.announcements=[];
+  return DB.site;
+}
 
+function a_home(){
+  ensureSite();
+  var pending=(DB.gradeQueue||[]).filter(function(g){return g.status==='pending'}).length;
+  setMain('Admin Dashboard','Manage accounts and school information',
+    '<div class="bento">'+ban()+
+    '<div class="c s3"><h3>Total accounts</h3><div class="big">'+esc(DB.accounts.length)+'</div></div>'+
+    '<div class="c s3"><h3>Pending grades</h3><div class="big">'+esc(pending)+'</div></div>'+
+    '<div class="c s3"><h3>Announcements</h3><div class="big">'+esc(DB.site.announcements.length)+'</div></div>'+
+    '<div class="c s6"><h3>School info</h3><p><b>'+esc(DB.school.name)+'</b> \u2014 '+esc(DB.school.tagline)+'</p><p class="none" style="margin-top:.3rem">'+esc(DB.school.address)+' \u00B7 '+esc(DB.school.phone)+' \u00B7 '+esc(DB.school.email)+'</p></div>'+
+    '</div>');
+}
+
+function a_accounts(){
+  var roleFilter=(window.currentRoleFilter||'');
+  var roles=['student','teacher','registrar','cashier','admin'];
+  var roleOrder={admin:0,teacher:1,registrar:2,cashier:3,student:4};
+  var roleLabels={admin:'Administrators',teacher:'Teachers',registrar:'Registrars',cashier:'Cashiers',student:'Students'};
+  var teachers=DB.accounts.filter(function(a){return a.role==='teacher'});
+  var advOpts='<option value="">No adviser</option>'+teachers.map(function(t){return '<option value="'+esc(t.name)+'">'+esc(t.name)+' ('+esc(t.subject||'General')+')</option>'}).join('');
+
+  var sorted=DB.accounts.slice().sort(function(a,b){return (roleOrder[a.role]||99)-(roleOrder[b.role]||99)||String(a.name||'').localeCompare(String(b.name||''))});
+  if(roleFilter) sorted=sorted.filter(function(a){return a.role===roleFilter});
+
+  var groups={}; sorted.forEach(function(a){ if(!groups[a.role]) groups[a.role]=[]; groups[a.role].push(a); });
+  var tables=roles.map(function(r){
+    var list=groups[r]||[]; if(!list.length) return '';
+    return '<div class="c" style="margin-top:1rem"><h4 style="color:var(--g3);margin-bottom:.5rem">'+esc(roleLabels[r])+' ('+list.length+')</h4>'+
+      '<table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>Role</th><th class="noprint">Adviser/Subject</th><th class="noprint">Reset PW</th><th class="noprint">Remove</th></tr></thead><tbody>'+
+      list.map(function(a){
+        var adv='';
+        if(a.role==='student'&&a.adviser) adv=esc(a.adviser);
+        else if(a.role==='teacher') adv=esc(a.subject||'General');
+        var rm=(a.id===me.id)?'—':'<button class="btn sm bad" type="button" onclick="delAcct(this.dataset.id)" data-id="'+esc(a.id)+'">Remove</button>';
+        return '<tr><td><b>'+esc(a.id)+'</b></td><td>'+esc(a.name)+'</td><td><span class="tag '+(a.role==='admin'?'ok':'pend')+'">'+esc(a.role)+'</span></td><td class="noprint">'+adv+'</td><td class="noprint"><button class="btn sm o" type="button" onclick="resetPw(this.dataset.id)" data-id="'+esc(a.id)+'">Reset</button></td><td class="noprint">'+rm+'</td></tr>';
+      }).join('')+
+      '</tbody></table></div>';
+  }).join('');
+
+  var filterHtml='<div class="row" style="margin-bottom:1rem"><div><label>Filter by Role</label><select id="roleFilter"><option value="">All Roles</option>'+roles.map(function(r){return '<option value="'+esc(r)+'"'+(roleFilter===r?' selected':'')+'>'+esc(roleLabels[r])+'</option>'}).join('')+'</select></div></div>';
+
+  setMain('Account Management','Create and manage all portal accounts',
+    '<div class="c"><h3>Create account</h3>'+
+    '<div class="row">'+
+      '<div><label>ID / Username</label><input id="n_id" placeholder="e.g. 2026-0001"></div>'+
+      '<div><label>Full name</label><input id="n_nm"></div>'+
+      '<div><label>Role</label><select id="n_rl">'+roles.map(function(r){return '<option value="'+esc(r)+'">'+esc(r)+'</option>'}).join('')+'</select></div>'+
+      '<div><label>Temporary password</label><input id="n_pw" type="password" placeholder="Min 10 chars, upper/lower/number/special" value=""></div>'+
+    '</div>'+
+    '<div class="note" style="margin:.2rem 0 .8rem">Set a temporary password meeting policy (10+ chars, upper, lower, number, special). The user will be required to change it on first sign-in.</div>'+
+    '<div class="row" id="studentFields">'+
+      '<div><label>Level/Section (student) or Subject (teacher)</label><input id="n_ex" placeholder="e.g. Grade 8 – St. Matthew"></div>'+
+      '<div><label>Adviser (students only)</label><select id="n_adv">'+advOpts+'</select></div>'+
+    '</div>'+
+    '<button class="btn sm" type="button" onclick="addAcct()">Create Account</button></div>'+
+    filterHtml+
+    '<div style="margin-top:1rem"><h3>All accounts</h3>'+ (tables||'<div class="c"><p class="none">No accounts found.</p></div>') +'</div>');
+
+  var rf=$('roleFilter'); if(rf){ rf.onchange=function(){ window.currentRoleFilter=rf.value; a_accounts(); }; }
+  var rl=$('n_rl'); if(rl){ rl.onchange=toggleStudentFields; toggleStudentFields(); }
+}
+
+function toggleStudentFields(){
+  var role=$('n_rl')?$('n_rl').value:'student';
+  var ex=$('n_ex'), adv=$('n_adv');
+  if(ex) ex.placeholder = role==='teacher' ? 'e.g. Mathematics' : (role==='student' ? 'e.g. Grade 8 – St. Matthew' : 'Optional');
+  if(adv) adv.disabled = role!=='student';
+}
+
+function addAcct(){
+  var id=$('n_id').value.trim(), name=$('n_nm').value.trim(), role=$('n_rl').value, pw=$('n_pw').value||'', ex=$('n_ex').value.trim(), adv=$('n_adv')?$('n_adv').value:'';
+  if(!id||!name){ flash('ID and name are required.','err'); return; }
+  if(acctById(id)){ flash('That ID already exists.','err'); return; }
+  if(pw.length<10){ flash('Password must be at least 10 characters.','err'); return; }
+  if(!isStrongPassword(pw)){ flash(passwordPolicyMessage(),'err'); return; }
+  var a={id:id,pw:pw,role:role,name:name,first:true};
+  if(role==='student'){ a.level=ex||'Unassigned'; a.sy='2025\u20132026'; a.adviser=adv||''; ensureStudent(id); }
+  else if(role==='teacher'){ a.subject=ex||'General'; }
+  DB.accounts.push(a); saveDB(); flash('Account created. User must change password on first sign-in.'); a_accounts();
+}
+
+function resetPw(id){
+  var a=acctById(id); if(!a) return;
+  var pw=window.prompt('Enter a new temporary password for '+a.name+' ('+a.id+').\n'+passwordPolicyMessage(), '');
+  if(pw==null) return;
+  if(pw.length<10 || !isStrongPassword(pw)){ flash(passwordPolicyMessage(),'err'); return; }
+  a.pw=pw; a.first=true; saveDB(); flash('Temporary password set. User must change it on next sign-in.'); a_accounts();
+}
+
+function delAcct(id){
+  if(!id || id===me.id) return;
+  if(!window.confirm('Remove account '+id+'? This cannot be undone.')) return;
+  DB.accounts=DB.accounts.filter(function(a){return a.id!==id});
+  if(DB.students && DB.students[id]) delete DB.students[id];
+  DB.gradeQueue=(DB.gradeQueue||[]).filter(function(g){return g.studentId!==id});
+  DB.documents=(DB.documents||[]).filter(function(d){return d.studentId!==id});
+  DB.teacherAssignments=(DB.teacherAssignments||[]).filter(function(a){return a.studentId!==id});
+  saveDB(); flash('Account removed.'); a_accounts();
+}
+
+function a_school(){
+  var s=DB.school||{name:'',tagline:'',address:'',phone:'',email:'',about:''};
+  setMain('School Information','Edit the school details used across the portal',
+    '<div class="stack"><div class="c s6">'+
+      '<div class="ws-head"><div><h3 style="margin-bottom:.35rem">School details</h3><div class="ws-meta">These details are stored in the portal database and shown across dashboards and the website where configured.</div></div></div>'+
+      '<div class="grid2">'+
+        '<div class="subcard"><h4>Identity</h4>'+
+          '<div class="field"><label>School name</label><input id="sc_nm" value="'+esc(s.name||'')+'"></div>'+
+          '<div class="field"><label>Tagline</label><input id="sc_tg" value="'+esc(s.tagline||'')+'"></div>'+
+          '<div class="field"><label>About</label><textarea id="sc_ab" style="min-height:140px">'+esc(s.about||'')+'</textarea></div>'+
+        '</div>'+
+        '<div class="subcard"><h4>Contact & Location</h4>'+
+          '<div class="field"><label>Address</label><textarea id="sc_ad" style="min-height:90px">'+esc(s.address||'')+'</textarea></div>'+
+          '<div class="field"><label>Phone</label><input id="sc_ph" value="'+esc(s.phone||'')+'" placeholder="e.g. 0917 123 4567"></div>'+
+          '<div class="field"><label>Email</label><input id="sc_em" type="email" value="'+esc(s.email||'')+'" placeholder="e.g. info@mfa.edu.ph"></div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="toolbar noprint" style="margin-top:.9rem"><button class="btn sm" type="button" onclick="saveSchool()">Save School Info</button></div>'+
+      '<div class="note" style="margin-top:.85rem">This is a local demo using <code>localStorage</code>. For production, store data on a server with proper authentication and hashing.</div>'+
+    '</div></div>');
+}
+
+function saveSchool(){
+  DB.school={name:$('sc_nm').value.trim()||DB.school.name,tagline:$('sc_tg').value.trim(),address:$('sc_ad').value.trim(),phone:$('sc_ph').value.trim(),email:$('sc_em').value.trim(),about:$('sc_ab').value.trim()};
+  saveDB(); flash('School information saved.'); a_school();
+}
+
+function a_site(){
+  var site=ensureSite();
+  var ann=site.announcements.map(function(a,i){
+    return '<tr><td><b>'+esc(a.title||'')+'</b><div class="none" style="margin-top:.15rem">'+esc((a.body||'').slice(0,90))+((a.body||'').length>90?'…':'')+'</div></td><td>'+esc(a.date||'')+'</td><td class="noprint"><div class="acts"><button class="btn sm o" type="button" onclick="editAnn('+i+')">Edit</button><button class="btn sm bad" type="button" onclick="delAnn('+i+')">Delete</button></div></td></tr>';
+  }).join('')||'<tr><td colspan="3" class="na">No announcements yet.</td></tr>';
+
+  setMain('Edit Website','Manage website text and announcements',
+    '<div class="stack">'+
+      '<div class="c s6">'+
+        '<div class="ws-head"><div><h3 style="margin-bottom:.35rem">Structured content</h3><div class="ws-meta">Edits are saved locally and applied by <code>index.html</code> in this browser. Raw HTML/JS injection from the admin panel is disabled for safety.</div></div><div class="toolbar noprint"><a class="btn sm o" href="index.html" target="_blank" rel="noopener noreferrer">Open index.html</a></div></div>'+
+        '<div class="grid2">'+
+          '<div class="subcard"><h4>Hero & History</h4>'+
+            '<div class="field"><label>Hero title</label><input id="si_ht" value="'+esc(site.heroTitle||'')+'"></div>'+
+            '<div class="field"><label>Hero subtitle</label><input id="si_hs" value="'+esc(site.heroSub||'')+'"></div>'+
+            '<div class="field"><label>History title</label><input id="si_hist" value="'+esc(site.historyTitle||'')+'"></div>'+
+            '<div class="field"><label>History text</label><textarea id="si_his">'+esc(site.historyText||'')+'</textarea></div>'+
+          '</div>'+
+          '<div class="subcard"><h4>Mission, Vision & Contact</h4>'+
+            '<div class="field"><label>Mission</label><textarea id="si_mis">'+esc(site.mission||'')+'</textarea></div>'+
+            '<div class="field"><label>Vision</label><textarea id="si_vis">'+esc(site.vision||'')+'</textarea></div>'+
+            '<div class="field"><label>Contact info</label><textarea id="si_con">'+esc(site.contact||'')+'</textarea></div>'+
+            '<div class="field"><label>Footer note</label><input id="si_footer" value="'+esc(site.footer||'')+'"></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="toolbar noprint" style="margin-top:.85rem"><button class="btn sm" type="button" onclick="saveSite()">Save Website Content</button></div>'+
+      '</div>'+
+      '<div class="c s6"><h3>Announcements</h3>'+
+        '<div class="subcard">'+
+          '<div class="grid2">'+
+            '<div class="field"><label>Title</label><input id="an_t" placeholder="Announcement title"></div>'+
+            '<div class="field"><label>Date</label><input id="an_d" placeholder="e.g. Nov 6, 2026"></div>'+
+          '</div>'+
+          '<div class="field"><label>Body</label><textarea id="an_b" placeholder="Announcement details"></textarea></div>'+
+          '<div class="toolbar noprint"><button class="btn sm" type="button" id="an_btn" onclick="addAnn()">Add Announcement</button><button class="btn sm o" type="button" id="an_can" style="display:none" onclick="cancelAnn()">Cancel</button></div>'+
+        '</div>'+
+        '<table class="tbl" style="margin-top:.9rem"><thead><tr><th>Announcement</th><th style="width:140px">Date</th><th style="width:170px" class="noprint">Actions</th></tr></thead><tbody>'+ann+'</tbody></table>'+
+      '</div>'+
+    '</div>');
+}
+
+function saveSite(){
+  var site=ensureSite();
+  site.heroTitle=$('si_ht').value; site.heroSub=$('si_hs').value; site.historyTitle=$('si_hist').value; site.historyText=$('si_his').value;
+  site.mission=$('si_mis').value; site.vision=$('si_vis').value; site.contact=$('si_con').value; site.footer=$('si_footer').value;
+  saveDB(); flash('Website content saved. Refresh index.html to see changes.');
+}
+
+function addAnn(){
+  var site=ensureSite(), t=$('an_t').value.trim(), d=$('an_d').value.trim(), b=$('an_b').value.trim();
+  if(!t){ flash('Announcement title is required.','err'); return; }
+  var obj={title:t,date:d||today(),body:b};
+  if(_annEdit>=0 && site.announcements[_annEdit]){ site.announcements[_annEdit]=obj; _annEdit=-1; flash('Announcement updated.'); }
+  else { site.announcements.unshift(obj); flash('Announcement added.'); }
+  saveDB(); a_site();
+}
+function editAnn(i){
+  var site=ensureSite(), a=site.announcements[i]; if(!a) return;
+  _annEdit=i; $('an_t').value=a.title||''; $('an_d').value=a.date||''; $('an_b').value=a.body||'';
+  $('an_btn').textContent='Update Announcement'; $('an_can').style.display='inline-block'; window.scrollTo(0,0);
+}
+function cancelAnn(){
+  _annEdit=-1; if($('an_t')) $('an_t').value=''; if($('an_d')) $('an_d').value=''; if($('an_b')) $('an_b').value='';
+  if($('an_btn')) $('an_btn').textContent='Add Announcement'; if($('an_can')) $('an_can').style.display='none';
+}
+function delAnn(i){
+  var site=ensureSite(); if(i<0||i>=site.announcements.length) return;
+  site.announcements.splice(i,1); _annEdit=-1; saveDB(); flash('Announcement deleted.'); a_site();
+}
+
+var VIEWS={a_home:a_home,a_accounts:a_accounts,a_school:a_school,a_site:a_site};
 $('out').onclick=signOut;
-if(checkSession('admin'))buildShell();
-</script></body></html>
+if(checkSession('admin')) buildShell();
+</script>
+</body>
+</html>
