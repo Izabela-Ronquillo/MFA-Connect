@@ -41,6 +41,7 @@ main{padding:1.55rem 2.1rem 3rem;max-width:1180px;width:100%}
 .gtbl th{background:rgba(5,18,43,.8);color:var(--g3);font-size:.73rem;text-transform:uppercase;letter-spacing:1px;font-weight:700}
 .gtbl th:first-child,.gtbl td:first-child{text-align:left;font-weight:600;padding-left:1.2rem}.gtbl td:first-child{color:var(--soft)}
 .gtbl tr:last-child td{border-bottom:0}.gtbl .fin{font-weight:800;color:var(--g4)}
+  .gtbl .avg-row td{background:rgba(212,175,55,.12);border-top:2px solid var(--g2);font-weight:800}
 .pg{display:grid;grid-template-columns:repeat(auto-fill,minmax(116px,1fr));gap:.58rem;margin-top:.8rem}
 .pill{background:rgba(5,18,43,.6);border-radius:13px;padding:.66rem;border-bottom:4px solid}.pill.P{border-color:var(--ok)}.pill.L{border-color:var(--g3)}.pill.A{border-color:var(--bad)}
 .pill b{display:block;font-size:.84rem}.pill span{font-size:.77rem;color:var(--mute)}
@@ -99,8 +100,11 @@ function s_grades(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Ob
   var selectedQ=(window.__selQ!==undefined?window.__selQ:4);
   var dd='<div class="chips noprint" style="justify-content:flex-end;margin-bottom:1rem">'+quarters.map(function(q,i){return '<button class="chip '+(i===selectedQ?'on':'')+'" onclick="window.__selQ='+i+';s_grades()">'+q+'</button>'}).join('')+'</div>';
   var idx=selectedQ;
-  var body=rows.map(function(r){var g=r[idx+1];return '<tr><td>'+esc(r[0])+'</td><td class="fin">'+v(g)+'</td></tr>'}).join('')||'<tr><td colspan="2" class="na" style="text-align:center">No grades available for this quarter.</td></tr>';
-  setMain('Grades',(me.level||'')+' \u00B7 SY '+sy+' \u00B7 '+quarters[selectedQ],dd+'<div class="c" style="padding:0;overflow:hidden"><table class="gtbl" style="max-width:100%"><thead><tr><th>Subject</th><th>'+quarters[selectedQ]+'</th></tr></thead><tbody>'+body+'</tbody></table></div><p class="foot">Only grades validated by the registrar appear here.</p>')}
+  var validRows=rows.filter(function(r){return r[idx+1]!=null});
+  var body=validRows.map(function(r){var g=r[idx+1];return '<tr><td>'+esc(r[0])+'</td><td class="fin">'+v(g)+'</td></tr>'}).join('')||'<tr><td colspan="2" class="na" style="text-align:center">No grades available for this quarter.</td></tr>';
+  var avg=validRows.length?Math.round(validRows.reduce(function(s,r){return s+r[idx+1]},0)/validRows.length):null;
+  var avgRow=avg!=null?'<tr class="avg-row"><td style="font-weight:700">Average</td><td class="fin" style="font-size:1.05rem">'+avg+'</td></tr>':'';
+  setMain('Grades',(me.level||'')+' \u00B7 SY '+sy+' \u00B7 '+quarters[selectedQ],dd+'<div class="c" style="padding:0;overflow:hidden"><table class="gtbl" style="max-width:100%"><thead><tr><th>Subject</th><th>'+quarters[selectedQ]+'</th></tr></thead><tbody>'+body+avgRow+'</tbody></table></div><p class="foot">Only grades validated by the registrar appear here.</p>')}
 function s_sched(){var st=DB.students[me.id]||ensureStudent(me.id),w=new Date().getDay(),td=w>=1&&w<=5?w:1;if(sDay==null)sDay=td;
   var chips=[1,2,3,4,5].map(function(d){return '<button class="chip '+(d===sDay?'on':'')+'" onclick="sDay='+d+';s_sched()">'+FD[d]+'</button>'}).join('');
   var list=getStudentSchedule(me.id).filter(function(x){return onDay(x[2],sDay)});
