@@ -1,19 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- MFA Admin index override -->
-<script>
-(function(){
-  try{
-    if(window.__mfaOverrideApplied) return;
-    var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');
-    if(d && d.site && d.site.indexHtml && String(d.site.indexHtml).trim()){
-      window.__mfaOverrideApplied=true;
-      document.open(); document.write(d.site.indexHtml); document.close();
-    }
-  }catch(e){}
-})();
-</script>
+<!-- MFA Admin index override removed for safety (stored HTML injection risk) -->
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -905,8 +893,8 @@
   <section class="hero">
     <div class="hero-content">
       <span class="hero-badge"><i class="fas fa-star" style="margin-right: 6px;"></i>Established 2003</span>
-      <h1>Welcome to <span>Marvelous Faith Academy</span></h1>
-      <p></p>
+      <h1 id="mfaHeroTitle">Welcome to <span>Marvelous Faith Academy</span></h1>
+      <p id="mfaHeroSub"></p>
       <div class="hero-actions">
         <a href="#history" class="btn"><i class="fas fa-book" style="margin-right: 8px;"></i>Our History</a>
         <a href="#contact" class="btn btn-outline"><i class="fas fa-phone" style="margin-right: 8px;"></i>Contact Us</a>
@@ -921,19 +909,19 @@
     </div>
   </section>
 
-  
-    <section id="announcements" style="max-width:1100px;margin:1.5rem auto;padding:0 1rem;">
-      <h2 style="margin-bottom:.8rem;">Announcements</h2>
-      <div id="mfaAnnouncements"><p style="opacity:.7">No announcements at this time.</p></div>
-    </section>
-    <!-- History Section -->
+  <section id="announcements" style="max-width:1100px;margin:1.5rem auto;padding:0 1rem;">
+    <h2 style="margin-bottom:.8rem;">Announcements</h2>
+    <div id="mfaAnnouncements"><p style="opacity:.7">No announcements at this time.</p></div>
+  </section>
+
+  <!-- History Section -->
   <section class="info-section" id="history">
-    <h2 class="section-title">Our <span>History</span></h2>
+    <h2 class="section-title" id="mfaHistoryTitle">Our <span>History</span></h2>
     <p class="section-sub">A journey of growth, and service to the Bacoor community.</p>
 
     <div class="history-grid">
       <div class="history-text">
-        <p>Marvelous Faith Academy of Bacoor was established in 2003 by a group of educators with the primary goal of providing accessible and quality education to families in Bacoor City, Cavite. Over the years, the academy grew its academic footprint from early childhood education into a full basic education provider covering preschool, elementary, and junior high school levels.</p>
+        <p id="mfaHistoryText">Marvelous Faith Academy of Bacoor was established in 2003 by a group of educators with the primary goal of providing accessible and quality education to families in Bacoor City, Cavite. Over the years, the academy grew its academic footprint from early childhood education into a full basic education provider covering preschool, elementary, and junior high school levels.</p>
       </div>
       <div class="history-highlight">
         <div class="year">2003</div>
@@ -1070,29 +1058,28 @@
           <li><a href="#mission-vision">Mission & Vision</a></li>
           <li><a href="#hymn">School Hymn</a></li>
           <li><a href="#contact">Contact Us</a></li>
-          <li><a href="#" target="_blank">School Portal</a></li>
+          <li><a href="student-portal-mfa.html">School Portal</a></li>
         </ul>
       </div>
 
       <!-- Column 3: Contact Information -->
       <div class="footer-col">
         <h4>Contact Information</h4>
-      <div id="mfaContact"></div>
         <div class="footer-contact-item">
           <i class="fas fa-map-pin"></i>
-          <span>Marvelous Faith Academy, 125 FTM Compound, Mambog 4,<br>Bacoor City, Cavite, Philippines, 4102</span>
+          <span id="mfaFooterAddress">Marvelous Faith Academy, 125 FTM Compound, Mambog 4,<br>Bacoor City, Cavite, Philippines, 4102</span>
         </div>
         <div class="footer-contact-item">
           <i class="fas fa-mobile-alt"></i>
-          <a href="tel:+639171234567">0917 123 4567</a>
+          <a id="mfaFooterPhone" href="tel:+639171234567">0917 123 4567</a>
         </div>
         <div class="footer-contact-item">
           <i class="fas fa-envelope"></i>
-          <a href="mailto:mfaonline@mfabacoor.net">mfaonline@mfabacoor.net</a>
+          <a id="mfaFooterEmail" href="mailto:mfaonline@mfabacoor.net">mfaonline@mfabacoor.net</a>
         </div>
         <div class="footer-contact-item">
           <i class="fas fa-clock"></i>
-          <span>Mon–Fri: 7AM–4PM<br>Sat: 7AM–4PM</span>
+          <span id="mfaFooterHours">Mon–Fri: 7AM–4PM<br>Sat: 7AM–4PM</span>
         </div>
       </div>
 
@@ -1129,28 +1116,36 @@
 <script>
 (function(){
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})}
+  function nl2br(s){return esc(s).replace(/\n/g,'<br>')}
   try{
     var d=JSON.parse(localStorage.getItem('mfa_portal_db')||'null');
     if(!d||!d.site) return;
     var site=d.site;
-    function set(id,val){var el=document.getElementById(id); if(el && val!=null && val!=='') el.textContent=val;}
-    function setH(id,val){var el=document.getElementById(id); if(el && val!=null && val!=='') el.innerHTML=esc(val).replace(/\n/g,'<br>');}
-    set('mfaHeroTitle', site.heroTitle); set('mfaHeroSub', site.heroSub);
-    set('mfaHistoryTitle', site.historyTitle); setH('mfaHistoryText', site.historyText);
-    setH('mfaMission', site.mission); setH('mfaVision', site.vision);
-    setH('mfaContact', site.contact); setH('mfaHymn', site.hymn); set('mfaFooter', site.footer);
+    function setText(id,val){var el=document.getElementById(id); if(el && val!=null && String(val).trim()!=='') el.textContent=String(val);}
+    function setHtml(id,val){var el=document.getElementById(id); if(el && val!=null && String(val).trim()!=='') el.innerHTML=nl2br(String(val));}
+
+    if(site.heroTitle && String(site.heroTitle).trim()){
+      var ht=document.getElementById('mfaHeroTitle');
+      if(ht) ht.textContent=String(site.heroTitle);
+    }
+    if(site.heroSub && String(site.heroSub).trim()) setText('mfaHeroSub', site.heroSub);
+    if(site.historyTitle && String(site.historyTitle).trim()) setText('mfaHistoryTitle', site.historyTitle);
+    if(site.historyText && String(site.historyText).trim()) setHtml('mfaHistoryText', site.historyText);
+    if(site.mission && String(site.mission).trim()) setHtml('mfaMission', site.mission);
+    if(site.vision && String(site.vision).trim()) setHtml('mfaVision', site.vision);
+
     var wrap=document.getElementById('mfaAnnouncements');
-    if(wrap && site.announcements){
+    if(wrap && Array.isArray(site.announcements)){
       wrap.innerHTML = site.announcements.length ? site.announcements.map(function(a){
-        return '<div class="announcement-item" style="background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.25);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem"><b style="color:#f0d060">'+esc(a.title||'Announcement')+'</b><div style="margin-top:.25rem;opacity:.9">'+esc(a.body||'').replace(/\n/g,'<br>')+'</div><small style="opacity:.6">'+esc(a.date||'')+'</small></div>';
+        return '<div class="announcement-item" style="background:rgba(255,255,255,.08);border:1px solid rgba(212,175,55,.25);border-radius:14px;padding:1rem 1.2rem;margin-bottom:.8rem">'
+          + '<b style="color:#f0d060">'+esc(a&&a.title||'Announcement')+'</b>'
+          + '<div style="margin-top:.25rem;opacity:.9">'+nl2br(a&&a.body||'')+'</div>'
+          + '<small style="opacity:.6">'+esc(a&&a.date||'')+'</small></div>';
       }).join('') : '<p style="opacity:.7">No announcements at this time.</p>';
     }
-    if(site.customCss){var st=document.createElement('style'); st.id='mfaAdminCss'; st.textContent=site.customCss; document.head.appendChild(st);}
-    if(site.customHtml){var dv=document.createElement('div'); dv.id='mfaAdminHtml'; dv.innerHTML=site.customHtml; document.body.appendChild(dv);}
-    if(site.customJs){try{(new Function(site.customJs))()}catch(e){console.warn('Admin custom JS error',e)}}
-  }catch(e){console.warn('MFA admin loader error',e)}
+  }catch(e){}
 })();
-  </script>
+</script>
 
   <!-- Navbar hide/show & scroll-to-top -->
   <script>
