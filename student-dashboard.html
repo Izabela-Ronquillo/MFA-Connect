@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -22,42 +22,36 @@
 </section>
 <script src="portal-shared.js"></script>
 <script>
-var D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],FD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-var $=function(id){return document.getElementById(id)};
-var peso=function(n){return '\u20B1'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})};
-function onDay(s,d){var m=s.match(/(\w{3}) \u2013 (\w{3})/);if(m){var a=D.indexOf(m[1]),b=D.indexOf(m[2]);if(a>=0&&b>=0)return d>=a&&d<=b}return s.indexOf(D[d])>=0}
-function v(g){return g==null?'<span class="na">\u2013</span>':esc(g)}
-
 var NAV=[['s_home','\u2302','Overview'],['s_grades','\u2605','Grades'],['s_sched','\u25F7','Schedule'],['s_att','\u2713','Attendance'],['s_pay','\u20B1','Balances']];
-function buildShell(){$('mn').textContent=me.name;$('mr').textContent='Student';$('mid').textContent=me.id;$('nav').innerHTML=NAV.map(function(n,i){return '<button class="nv'+(i===0?' on':'')+'" data-v="'+n[0]+'"><b>'+n[1]+'</b>'+n[2]+'</button>'}).join('');$('nav').onclick=function(e){var b=e.target.closest('.nv');if(b)openView(b.dataset.v)};openView(NAV[0][0])}
+var __selQ=4;
+function getStudentSchedule(sid){var st=DB.students[sid]||ensureStudent(sid);var base=st.sched||[];var assigned=(DB.teacherAssignments||[]).filter(function(a){return a.studentId===sid}).map(function(a){return [a.time||'',a.subject||'',(a.days||[]).join(' \u00B7 '),a.room||'',a.teacher||'']});return base.concat(assigned)}
 function s_home(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
-  var bars=rows.map(function(r){var g=[r[1],r[2],r[3],r[4]].filter(function(x){return x!=null}).pop();return '<div class="bar"><span>'+esc(r[0])+'</span><div class="trk"><i style="width:'+(g||0)+'%"></i></div><b>'+v(g)+'</b></div>'}).join('')||'<p class="none">No released grades yet.</p>';
-  var paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),rem=(st.fees.total||0)-paid,pc=st.fees.total?Math.round(paid/st.fees.total*100):0;
+  var bars=rows.map(function(r){var g=[r[1],r[2],r[3],r[4]].filter(function(x){return x!=null}).pop();return '<div class="bar"><span>'+esc(r[0])+'</span><div class="trk"><i style="width:'+esc(g||0)+'%"></i></div><b>'+v(g)+'</b></div>'}).join('')||'<p class="none">No released grades yet.</p>';
+  var paid=(st.fees.pay||[]).reduce(function(a,p){return a+Number(p[3]||0)},0),total=Number(st.fees.total||0),rem=Math.max(0,total-paid),pc=total?Math.round(paid/total*100):0;
   var w=new Date().getDay(),td=w>=1&&w<=5?w:1,sched=getStudentSchedule(me.id).filter(function(x){return onDay(x[2],td)}),att=st.att||[];
   function c(s){return att.filter(function(a){return a[1]===s}).length}
-  setMain('Hello, '+me.name.split(' ')[0]+'!','Student dashboard','<div class="bento">'+ban()+'<div class="c s2"><h3>Balance</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div><div class="big">'+peso(rem)+'</div><div class="cap">remaining</div></div><div class="c s4"><h3>Latest released grades</h3>'+bars+'</div><div class="c s2"><h3>Attendance</h3><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div></div><div class="c s6"><h3>'+FD[td]+' schedule</h3><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div></div>')}
+  setMain('Hello, '+(me.name||'').split(' ')[0]+'!','Student dashboard','<div class="bento">'+ban()+'<div class="c s2"><h3>Balance</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div><div class="big">'+peso(rem)+'</div><div class="cap">remaining</div></div><div class="c s4"><h3>Latest released grades</h3>'+bars+'</div><div class="c s2"><h3>Attendance</h3><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div></div><div class="c s6"><h3>'+FD[td]+' schedule</h3><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div></div>')}
 function s_grades(){var st=DB.students[me.id]||ensureStudent(me.id),sy=me.sy||Object.keys(st.grades)[0]||'',rows=st.grades[sy]||[];
   var quarters=['Q1','Q2','Q3','Q4','Final'];
-  var selectedQ=(window.__selQ!==undefined?window.__selQ:4);
-  var dd='<div class="chips noprint" style="justify-content:flex-end;margin-bottom:1rem">'+quarters.map(function(q,i){return '<button class="chip '+(i===selectedQ?'on':'')+'" onclick="window.__selQ='+i+';s_grades()">'+q+'</button>'}).join('')+'</div>';
+  var selectedQ=(__selQ>=0&&__selQ<=4)?__selQ:4;
+  var dd='<div class="chips noprint" style="justify-content:flex-end;margin-bottom:1rem">'+quarters.map(function(q,i){return '<button type="button" class="chip '+(i===selectedQ?'on':'')+'" onclick="__selQ='+i+';s_grades()">'+esc(q)+'</button>'}).join('')+'</div>';
   var idx=selectedQ;
   var body=rows.map(function(r){
     var g=r[idx+1];
     if(g==null) return '<tr><td>'+esc(r[0])+'</td><td class="na" style="font-style:italic;color:var(--mute)">Not yet validated</td></tr>';
-    return '<tr><td>'+esc(r[0])+'</td><td class="fin">'+v(g)+'</td></tr>';
+    return '<tr><td>'+esc(r[0])+'</td><td class="fin">'+esc(g)+'</td></tr>';
   }).join('')||'<tr><td colspan="2" class="na" style="text-align:center">No grades available for this quarter.</td></tr>';
   var validRows=rows.filter(function(r){return r[idx+1]!=null});
-  var avg=validRows.length?Math.round(validRows.reduce(function(s,r){return s+r[idx+1]},0)/validRows.length):null;
-  var avgRow=avg!=null?'<tr class="avg-row"><td style="font-weight:700">Average</td><td class="fin" style="font-size:1.05rem">'+avg+'</td></tr>':'';
-  setMain('Grades',(me.level||'')+' \u00B7 SY '+sy+' \u00B7 '+quarters[selectedQ],dd+'<div class="c" style="padding:0;overflow:hidden"><table class="gtbl" style="max-width:100%"><thead><tr><th>Subject</th><th>'+quarters[selectedQ]+'</th></tr></thead><tbody>'+body+avgRow+'</tbody></table></div><p class="foot">Only grades validated by the registrar appear here.</p>')}
-function s_sched(){var st=DB.students[me.id]||ensureStudent(me.id),w=new Date().getDay(),td=w>=1&&w<=5?w:1;if(sDay==null)sDay=td;
-  var chips=[1,2,3,4,5].map(function(d){return '<button class="chip '+(d===sDay?'on':'')+'" onclick="sDay='+d+';s_sched()">'+FD[d]+'</button>'}).join('');
+  var avg=validRows.length?Math.round(validRows.reduce(function(s,r){return s+Number(r[idx+1]||0)},0)/validRows.length):null;
+  var avgRow=avg!=null?'<tr class="avg-row"><td style="font-weight:700">Average</td><td class="fin" style="font-size:1.05rem">'+esc(avg)+'</td></tr>':'';
+  setMain('Grades',(me.level||'')+' \u00B7 SY '+sy+' \u00B7 '+quarters[selectedQ],dd+'<div class="c" style="padding:0;overflow:hidden"><table class="gtbl" style="max-width:100%"><thead><tr><th>Subject</th><th>'+esc(quarters[selectedQ])+'</th></tr></thead><tbody>'+body+avgRow+'</tbody></table></div><p class="foot">Only grades validated by the registrar appear here.</p>')}
+function s_sched(){var w=new Date().getDay(),td=w>=1&&w<=5?w:1;if(sDay==null)sDay=td;
+  var chips=[1,2,3,4,5].map(function(d){return '<button type="button" class="chip '+(d===sDay?'on':'')+'" onclick="sDay='+d+';s_sched()">'+esc(FD[d])+'</button>'}).join('');
   var list=getStudentSchedule(me.id).filter(function(x){return onDay(x[2],sDay)});
   setMain('Class Schedule',me.level||'','<div class="chips noprint">'+chips+'</div><div class="c"><div class="tl2">'+(list.length?list.map(function(x){return '<div class="ev"><small>'+esc(x[0])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+' \u00B7 '+esc(x[4])+'</span></div>'}).join(''):'<p class="none">No classes.</p>')+'</div></div>')}
-function getStudentSchedule(sid){var st=DB.students[sid]||ensureStudent(sid);var base=st.sched||[];var assigned=(DB.teacherAssignments||[]).filter(function(a){return a.studentId===sid}).map(function(a){return [a.time||'',a.subject||'',(a.days||[]).join(' \u00B7 '),a.room||'',a.teacher||'']});return base.concat(assigned)}
 function s_att(){var st=DB.students[me.id]||ensureStudent(me.id),att=st.att||[];function c(s){return att.filter(function(a){return a[1]===s}).length}
-  setMain('Attendance',me.level||'','<div class="c"><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div><div class="pg">'+(att.map(function(a){return '<div class="pill '+a[1][0]+'"><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div>'}).join('')||'<p class="none">No records.</p>')+'</div></div>')}
-function s_pay(){var st=DB.students[me.id]||ensureStudent(me.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),total=st.fees.total||0,rem=total-paid,pc=total?Math.round(paid/total*100):0;
+  setMain('Attendance',me.level||'','<div class="c"><div class="sum"><div><b style="color:var(--ok)">'+c('Present')+'</b><span>Present</span></div><div><b style="color:var(--g3)">'+c('Late')+'</b><span>Late</span></div><div><b style="color:var(--bad)">'+c('Absent')+'</b><span>Absent</span></div></div><div class="pg">'+(att.map(function(a){var code=String(a[1]||'')[0]||'';return '<div class="pill '+esc(code)+'"><b>'+esc(a[0])+'</b><span>'+esc(a[1])+'</span></div>'}).join('')||'<p class="none">No records.</p>')+'</div></div>')}
+function s_pay(){var st=DB.students[me.id]||ensureStudent(me.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+Number(p[3]||0)},0),total=Number(st.fees.total||0),rem=Math.max(0,total-paid),pc=total?Math.round(paid/total*100):0;
   setMain('Balances & Payments','Recorded by the cashier','<div class="bento"><div class="c s2"><h3>Paid</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div></div><div class="c s4"><h3>Summary</h3><div class="sum"><div><b>'+peso(total)+'</b><span>Total fees</span></div><div><b style="color:var(--ok)">'+peso(paid)+'</b><span>Paid</span></div><div><b style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</b><span>Remaining</span></div></div></div><div class="c s6"><h3>Recent payment transactions</h3><div class="tl2">'+([].concat(st.fees.pay||[]).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join('')||'<p class="none">No transactions.</p>')+'</div></div></div>')}
 var VIEWS={s_home:s_home,s_grades:s_grades,s_sched:s_sched,s_att:s_att,s_pay:s_pay};
 $('out').onclick=signOut;
