@@ -11,6 +11,7 @@
 body{font-family:'Inter',system-ui,sans-serif;background:radial-gradient(circle at 15% 10%,#1a3a6e 0%,#0a1f44 55%,#05122b 100%) fixed;color:#fff;min-height:100vh}
 .gt{background:var(--gold);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .btn{background:var(--gold);color:var(--deep);padding:.82rem 1.5rem;border:0;border-radius:12px;font:700 .98rem 'Inter',sans-serif;cursor:pointer;width:100%}
+  .btn.o{background:transparent;color:#fff;border:1.5px solid var(--g2);width:auto}
 .crest{width:88px;height:88px;border-radius:50%;background:var(--gold);padding:3px;margin-bottom:1.6rem;box-shadow:0 0 0 6px rgba(5,18,43,.2)}
 .crest i{display:flex;width:100%;height:100%;border-radius:50%;background:radial-gradient(circle at 30% 30%,#1a3a6e,#05122b);align-items:center;justify-content:center;font:800 1.5rem 'Inter';font-style:normal;color:var(--g3)}
 .split{display:grid;min-height:100vh;grid-template-columns:1.1fr 1fr}
@@ -29,9 +30,9 @@ input:focus{outline:2px solid var(--g3)}
 .pw-toggle:hover{background:rgba(240,208,96,.22)}
 .pw-toggle:focus{outline:2px solid var(--g3)}
 .hint{margin-top:1.1rem;font-size:.79rem;color:var(--mute);border-top:1px solid rgba(255,255,255,.08);padding-top:.85rem;line-height:1.7}.hint b{color:var(--g3)}
-.links{display:flex;justify-content:flex-end;margin-top:.8rem}
-  .links button{color:var(--g3);font-size:.82rem;background:transparent;border:1px solid rgba(240,208,96,.3);border-radius:50px;padding:.5rem 1.2rem;cursor:pointer;font:inherit;transition:.2s}
-  .links button:hover{background:rgba(240,208,96,.12);border-color:var(--g3);text-decoration:none}
+.links{display:flex;justify-content:flex-end;margin-top:.8rem;gap:.5rem}
+  .links button,.links a{color:var(--g3);font-size:.82rem;background:transparent;border:1px solid rgba(240,208,96,.3);border-radius:50px;padding:.5rem 1.2rem;cursor:pointer;font:inherit;transition:.2s;text-decoration:none}
+  .links button:hover,.links a:hover{background:rgba(240,208,96,.12);border-color:var(--g3);text-decoration:none}
 @media(max-width:900px){.split{grid-template-columns:1fr}.art{padding:2rem 7%}.art h1{font-size:1.9rem}.crest{width:62px;height:62px;margin-bottom:.9rem}.art em{display:none}}
 @media(max-width:480px){.art{padding:1.5rem 5%}.art h1{font-size:1.5rem;line-height:1.2}.art p{font-size:.95rem}.fwrap{padding:1.5rem 5%}h2{font-size:1.5rem}.btn{padding:.7rem 1rem;font-size:.9rem}input{padding:.65rem .9rem;font-size:.9rem}.pw-toggle{padding:.25rem .5rem;font-size:.7rem}.hint{font-size:.72rem;line-height:1.6}.crest{width:70px;height:70px}}
 @media(max-width:360px){.art h1{font-size:1.3rem}.art p{font-size:.88rem}.fwrap{padding:1rem 4%}h2{font-size:1.3rem}.sub{font-size:.8rem}input{padding:.6rem .8rem;font-size:.85rem}.btn{padding:.6rem .9rem;font-size:.85rem}.pw-toggle{padding:.2rem .4rem;font-size:.65rem}.hint{font-size:.68rem}.crest{width:58px;height:58px}}
@@ -47,16 +48,31 @@ input:focus{outline:2px solid var(--g3)}
       <label for="pw">Password</label><div class="pw-wrap"><input id="pw" type="password" required><button type="button" class="pw-toggle" data-target="pw" aria-pressed="false">Show</button></div>
       <div class="err" id="err"></div>
       <button class="btn" type="submit">Sign In</button>
-      <div class="links"><button type="button" onclick="window.location.href='index.html'">&larr; Back to website</button></div>
+      <div class="links"><button type="button" onclick="window.location.href='index.html'">&larr; Back to website</button><button type="button" onclick="showForgot()" class="o">Forgot password?</button></div>
       <div class="hint"><b>Student:</b> 2023-0142 / temp1234<br><b>Teacher:</b> teacher-001 / teacher123<br><b>Admin:</b> admin-001 / admin123<br><b>Registrar:</b> registrar-001 / registrar123<br><b>Cashier:</b> cashier-001 / cashier123<br>Accounts with a temporary password must change it before accessing the dashboard.</div>
     </form>
-    <form id="cf" autocomplete="off" style="display:none">
+<form id="cf" autocomplete="off" style="display:none">
       <h2>Change <span class="gt">password</span></h2><p class="sub" id="cfSub">Your temporary password must be changed before you can continue.</p>
       <label for="np1">New Password</label><div class="pw-wrap"><input id="np1" type="password" minlength="8" placeholder="At least 8 characters" required><button type="button" class="pw-toggle" data-target="np1" aria-pressed="false">Show</button></div>
       <label for="np2">Confirm New Password</label><div class="pw-wrap"><input id="np2" type="password" required><button type="button" class="pw-toggle" data-target="np2" aria-pressed="false">Show</button></div>
       <div class="err" id="err2"></div>
-      <button class="btn" type="submit">Save &amp; Continue</button>
+      <button class="btn" type="submit">Save & Continue</button>
       <div class="links"><a href="#" id="cfBack">&larr; Back to sign in</a></div>
+    </form>
+    <form id="ff" autocomplete="off" style="display:none">
+      <h2>Forgot <span class="gt">password</span></h2><p class="sub">Enter your ID to reset your password.</p>
+      <label for="fid">ID / Username</label><input id="fid" placeholder="e.g. 2023-0142 or admin-001" required>
+      <div class="err" id="err3"></div>
+      <button class="btn" type="submit">Reset Password</button>
+      <div class="links"><button type="button" onclick="hideForgot()" class="o">&larr; Back to sign in</button></div>
+    </form>
+    <form id="rf" autocomplete="off" style="display:none">
+      <h2>Set <span class="gt">new password</span></h2><p class="sub" id="rfSub">Enter your new password.</p>
+      <label for="rp1">New Password</label><div class="pw-wrap"><input id="rp1" type="password" minlength="8" placeholder="At least 8 characters" required><button type="button" class="pw-toggle" data-target="rp1" aria-pressed="false">Show</button></div>
+      <label for="rp2">Confirm New Password</label><div class="pw-wrap"><input id="rp2" type="password" required><button type="button" class="pw-toggle" data-target="rp2" aria-pressed="false">Show</button></div>
+      <div class="err" id="err4"></div>
+      <button class="btn" type="submit">Save & Continue</button>
+      <div class="links"><button type="button" onclick="hideForgot()" class="o">&larr; Back to sign in</button></div>
     </form>
   </div>
 </section>
@@ -84,6 +100,48 @@ function showChange(a){
 }
 function goBack(e){ if(e)e.preventDefault(); PENDING=null; document.getElementById('cf').style.display='none'; document.getElementById('lf').style.display='block'; document.getElementById('err').textContent=''; }
 document.getElementById('cfBack').addEventListener('click', goBack);
+  document.getElementById('ff').addEventListener('submit',function(e){
+    e.preventDefault();
+    var err=document.getElementById('err3'), fid=document.getElementById('fid').value.trim();
+    var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===fid){a=DB.accounts[i];break;}}
+    if(!a){err.textContent='Account not found.';return}
+    err.textContent='';
+    PENDING=a;
+    document.getElementById('ff').style.display='none';
+    document.getElementById('rf').style.display='block';
+    document.getElementById('rfSub').textContent='Hi '+a.name+'. Set your new password.';
+    document.getElementById('rp1').value=''; document.getElementById('rp2').value=''; document.getElementById('err4').textContent='';
+    document.getElementById('rp1').focus();
+  });
+  function showForgot(){
+    document.getElementById('lf').style.display='none';
+    document.getElementById('cf').style.display='none';
+    document.getElementById('ff').style.display='block';
+    document.getElementById('rf').style.display='none';
+    document.getElementById('fid').value=''; document.getElementById('err3').textContent='';
+    document.getElementById('fid').focus();
+  }
+  function hideForgot(){
+    PENDING=null;
+    document.getElementById('lf').style.display='block';
+    document.getElementById('ff').style.display='none';
+    document.getElementById('rf').style.display='none';
+    document.getElementById('err').textContent='';
+  }
+  document.getElementById('rf').addEventListener('submit',function(e){
+    e.preventDefault();
+    var err=document.getElementById('err4'), p1=document.getElementById('rp1').value, p2=document.getElementById('rp2').value;
+    if(!PENDING){err.textContent='Session expired. Please sign in again.';return}
+    if(p1.length<8){err.textContent='Password must be at least 8 characters.';return}
+    if(p1!==p2){err.textContent='Passwords do not match.';return}
+    var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===PENDING.id){a=DB.accounts[i];break;}}
+    if(!a){err.textContent='Account not found. Please sign in again.';return}
+    a.pw=p1; a.first=false; saveDB();
+    var dest=ROUTES[a.role];
+    if(!dest){err.textContent='No dashboard configured for role: '+a.role;return}
+    sessionStorage.setItem('mfa_session',JSON.stringify({id:a.id,role:a.role,ts:Date.now()}));
+    window.location.href=dest;
+  });
 document.getElementById('lf').addEventListener('submit',function(e){
   e.preventDefault();
   var id=document.getElementById('uid').value.trim();
