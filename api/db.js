@@ -36,7 +36,7 @@ const SEED = {
 };
 
 async function getPortalDoc(db) {
-  const col = db.collection('portal');
+  const col = db.collection('studentportal');
   let doc = await col.findOne({ _id: 'portal' });
   if (!doc) { await col.insertOne(SEED); doc = SEED; }
   return doc;
@@ -54,7 +54,7 @@ module.exports = async function handler(req, res) {
     if (req.method === 'POST') {
       const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
       if (!body || !Array.isArray(body.accounts)) return json(res, 400, { ok: false, error: 'Invalid payload' });
-      await db.collection('portal').updateOne({ _id: 'portal' }, { $set: Object.assign({}, body, { _id: 'portal' }) }, { upsert: true });
+      await db.collection('studentportal').updateOne({ _id: 'portal' }, { $set: Object.assign({}, body, { _id: 'portal' }) }, { upsert: true });
       return json(res, 200, { ok: true });
     }
     return json(res, 405, { ok: false, error: 'Method not allowed' });

@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
     const pw = String(body.pw || '');
     if (!id || !pw) return json(res, 400, { ok: false, error: 'Missing credentials' });
     const { db } = await connectToDatabase();
-    const doc = await db.collection('portal').findOne({ _id: 'portal' });
+    const doc = await db.collection('studentportal').findOne({ _id: 'portal' });
     if (!doc || !Array.isArray(doc.accounts)) return json(res, 500, { ok: false, error: 'Portal data not initialized' });
     const acct = doc.accounts.find(a => String(a.id) === id);
     if (!acct || acct.pw !== pw) return json(res, 401, { ok: false, error: 'Incorrect ID or password.' });
