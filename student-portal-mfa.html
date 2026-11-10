@@ -37,6 +37,7 @@ input:focus{outline:2px solid var(--g3)}
 @media(max-width:480px){.art{padding:1.5rem 5%}.art h1{font-size:1.5rem;line-height:1.2}.art p{font-size:.95rem}.fwrap{padding:1.5rem 5%}h2{font-size:1.5rem}.btn{padding:.7rem 1rem;font-size:.9rem}input{padding:.65rem .9rem;font-size:.9rem}.pw-toggle{padding:.25rem .5rem;font-size:.7rem}.hint{font-size:.72rem;line-height:1.6}.crest{width:70px;height:70px}}
 @media(max-width:360px){.art h1{font-size:1.3rem}.art p{font-size:.88rem}.fwrap{padding:1rem 4%}h2{font-size:1.3rem}.sub{font-size:.8rem}input{padding:.6rem .8rem;font-size:.85rem}.btn{padding:.6rem .9rem;font-size:.85rem}.pw-toggle{padding:.2rem .4rem;font-size:.65rem}.hint{font-size:.68rem}.crest{width:58px;height:58px}}
 </style>
+<script>const API = 'https://mfaconnect.vercel.app/';</script>
 </head>
 <body>
 <section class="split">
@@ -172,19 +173,24 @@ document.getElementById('rf').addEventListener('submit',function(e){
   var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===PENDING.id){a=DB.accounts[i];break;}}
   completeLogin(a,p1,err);
 });
-document.getElementById('lf').addEventListener('submit',function(e){
+async function apiLogin(id,pw){try{var r=await fetch((typeof API!=='undefined'?String(API).replace(/\/+$/,''):'')+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:id,pw:pw})});var j=await r.json().catch(function(){return {}});if(r.ok&&j.ok) return j.account||null;}catch(e){}return null}
+async function syncLoginDB(){try{var r=await fetch((typeof API!=='undefined'?String(API).replace(/\/+$/,''):'')+'/api/db');var j=await r.json().catch(function(){return {}});if(r.ok&&j.ok&&j.data){DB=normalizeDB(j.data);try{localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}catch(e){}}}catch(e){}}
+document.getElementById('lf').addEventListener('submit',async function(e){
   e.preventDefault();
   var id=document.getElementById('uid').value.trim();
   var pw=document.getElementById('pw').value;
-  var err=document.getElementById('err');
+  var err=document.getElementById('err'); err.textContent='';
+  await syncLoginDB();
+  var remote=await apiLogin(id,pw);
   var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===id){a=DB.accounts[i];break;}}
   if(!a && DEMO_TEMP[id]){
     var def=null; for(var j=0;j<DEFAULT.accounts.length;j++){if(DEFAULT.accounts[j].id===id){def=DEFAULT.accounts[j];break;}}
     if(def && (pw===DEMO_TEMP[id] || pw===LEGACY_PW[id])){ a=clone(def); a.pw=DEMO_TEMP[id]; a.first=true; DB.accounts.push(a); if(a.role==='student' && !DB.students[id]) DB.students[id]=clone(DEFAULT.students[id]||{sched:[],att:[],fees:{total:0,pay:[]},grades:{}}); saveDB(); }
   }
   if(a && LEGACY_PW[id] && pw===LEGACY_PW[id]){ a.pw=DEMO_TEMP[id]; a.first=true; saveDB(); pw=DEMO_TEMP[id]; }
-  if(!a||a.pw!==pw){err.textContent='Incorrect ID or password.';return}
-  err.textContent='';
+  if(remote && a){ var keepPw=a.pw; a=Object.assign({},a,remote); a.pw=keepPw; }
+  else if(remote && !a){ a=remote; }
+  if(!a||(!remote && a.pw!==pw)){err.textContent='Incorrect ID or password.';return}
   if(a.first || !isStrongPassword(a.pw)){ showChange(a, a.first ? 'Your temporary password must be changed before you can continue.' : 'Your current password does not meet the security policy and must be updated.'); return; }
   var dest=ROUTES[a.role];
   if(!dest){err.textContent='No dashboard configured for role: '+a.role;return}

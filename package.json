@@ -1,0 +1,12 @@
+﻿{
+  "name": "mfa-connect",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MFA Connect portal with Vercel serverless backend and MongoDB",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "mongodb": "^6.10.0"
+  }
+}

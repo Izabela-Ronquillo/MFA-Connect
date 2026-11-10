@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -65,7 +65,7 @@ function a_accounts(){
         var adv='';
         if(a.role==='student'&&a.adviser) adv=esc(a.adviser);
         else if(a.role==='teacher') adv=esc(a.subject||'General');
-        var rm=(a.id===me.id)?'—':'<button class="btn sm bad" type="button" onclick="delAcct(this.dataset.id)" data-id="'+esc(a.id)+'">Remove</button>';
+        var rm=(a.id===me.id)?'â€”':'<button class="btn sm bad" type="button" onclick="delAcct(this.dataset.id)" data-id="'+esc(a.id)+'">Remove</button>';
         return '<tr><td><b>'+esc(a.id)+'</b></td><td>'+esc(a.name)+'</td><td><span class="tag '+(a.role==='admin'?'ok':'pend')+'">'+esc(a.role)+'</span></td><td class="noprint">'+adv+'</td><td class="noprint"><button class="btn sm o" type="button" onclick="resetPw(this.dataset.id)" data-id="'+esc(a.id)+'">Reset</button></td><td class="noprint">'+rm+'</td></tr>';
       }).join('')+
       '</tbody></table></div>';
@@ -83,7 +83,7 @@ function a_accounts(){
     '</div>'+
     '<div class="note" style="margin:.2rem 0 .8rem">Set a temporary password meeting policy (10+ chars, upper, lower, number, special). The user will be required to change it on first sign-in.</div>'+
     '<div class="row" id="studentFields">'+
-      '<div><label>Level/Section (student) or Subject (teacher)</label><input id="n_ex" placeholder="e.g. Grade 8 – St. Matthew"></div>'+
+      '<div><label>Level/Section (student) or Subject (teacher)</label><input id="n_ex" placeholder="e.g. Grade 8 â€“ St. Matthew"></div>'+
       '<div><label>Adviser (students only)</label><select id="n_adv">'+advOpts+'</select></div>'+
     '</div>'+
     '<button class="btn sm" type="button" onclick="addAcct()">Create Account</button></div>'+
@@ -97,7 +97,7 @@ function a_accounts(){
 function toggleStudentFields(){
   var role=$('n_rl')?$('n_rl').value:'student';
   var ex=$('n_ex'), adv=$('n_adv');
-  if(ex) ex.placeholder = role==='teacher' ? 'e.g. Mathematics' : (role==='student' ? 'e.g. Grade 8 – St. Matthew' : 'Optional');
+  if(ex) ex.placeholder = role==='teacher' ? 'e.g. Mathematics' : (role==='student' ? 'e.g. Grade 8 â€“ St. Matthew' : 'Optional');
   if(adv) adv.disabled = role!=='student';
 }
 
@@ -162,7 +162,7 @@ function saveSchool(){
 function a_site(){
   var site=ensureSite();
   var ann=site.announcements.map(function(a,i){
-    return '<tr><td><b>'+esc(a.title||'')+'</b><div class="none" style="margin-top:.15rem">'+esc((a.body||'').slice(0,90))+((a.body||'').length>90?'…':'')+'</div></td><td>'+esc(a.date||'')+'</td><td class="noprint"><div class="acts"><button class="btn sm o" type="button" onclick="editAnn('+i+')">Edit</button><button class="btn sm bad" type="button" onclick="delAnn('+i+')">Delete</button></div></td></tr>';
+    return '<tr><td><b>'+esc(a.title||'')+'</b><div class="none" style="margin-top:.15rem">'+esc((a.body||'').slice(0,90))+((a.body||'').length>90?'â€¦':'')+'</div></td><td>'+esc(a.date||'')+'</td><td class="noprint"><div class="acts"><button class="btn sm o" type="button" onclick="editAnn('+i+')">Edit</button><button class="btn sm bad" type="button" onclick="delAnn('+i+')">Delete</button></div></td></tr>';
   }).join('')||'<tr><td colspan="3" class="na">No announcements yet.</td></tr>';
 
   setMain('Edit Website','Manage website text and announcements',
@@ -230,7 +230,7 @@ function delAnn(i){
 
 var VIEWS={a_home:a_home,a_accounts:a_accounts,a_school:a_school,a_site:a_site};
 $('out').onclick=signOut;
-if(checkSession('admin')) buildShell();
+if(checkSession('admin')){buildShell(); syncDBFromServer().then(function(){refreshPortalView()});}
 </script>
 </body>
 </html>

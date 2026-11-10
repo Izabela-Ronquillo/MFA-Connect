@@ -1,4 +1,9 @@
+const API = 'https://mfaconnect.vercel.app/';
 var D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],FD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function apiBase(){try{return (typeof API!=='undefined'&&API)?String(API).replace(/\/+$/,''):''}catch(e){return ''}}
+async function apiFetch(path,opts){var b=apiBase(); if(!b) throw new Error('API base not configured'); opts=opts||{}; opts.headers=Object.assign({'Content-Type':'application/json'},opts.headers||{}); var r=await fetch(b+path,opts); var ct=(r.headers.get('content-type')||''); var j=ct.indexOf('application/json')>=0?await r.json().catch(function(){return {}}):{}; if(!r.ok||j.ok===false) throw new Error((j&&j.error)||('HTTP '+r.status)); return j;}
+async function syncDBFromServer(){try{var j=await apiFetch('/api/db'); if(j&&j.data){ DB=normalizeDB(j.data); try{localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}catch(e){} } }catch(e){} return DB;}
+function saveDBRemote(){try{var b=apiBase(); if(!b) return; fetch(b+'/api/db',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(DB)}).catch(function(){})}catch(e){}}
 var $=function(id){return document.getElementById(id)};
 var peso=function(n){return '\u20B1'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})};
 var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]})};
@@ -46,7 +51,7 @@ function normalizeDB(d){
 function loadDB(){
   try{var raw=localStorage.getItem('mfa_portal_db');if(!raw)return clone(DEFAULT);var d=JSON.parse(raw);if(!d||!Array.isArray(d.accounts))return clone(DEFAULT);return normalizeDB(d)}catch(e){return clone(DEFAULT)}
 }
-function saveDB(){try{localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}catch(e){}}
+function saveDB(){try{localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}catch(e){} saveDBRemote();}
 var DB=loadDB(),me=null,sDay=null;
 function acctById(id){id=String(id==null?'':id);for(var i=0;i<DB.accounts.length;i++){if(String(DB.accounts[i].id)===id)return DB.accounts[i]}return null}
 function ensureStudent(id){id=String(id||'');if(!DB.students[id])DB.students[id]={sched:[],att:[],fees:{total:0,pay:[]},grades:{}};var st=DB.students[id];if(!Array.isArray(st.sched))st.sched=[];if(!Array.isArray(st.att))st.att=[];if(!st.fees||typeof st.fees!=='object')st.fees={total:0,pay:[]};if(typeof st.fees.total!=='number')st.fees.total=Number(st.fees.total)||0;if(!Array.isArray(st.fees.pay))st.fees.pay=[];if(!st.grades||typeof st.grades!=='object')st.grades={};return st}
@@ -54,6 +59,7 @@ function openView(v){var els=document.querySelectorAll('.nv');for(var i=0;i<els.
 function setMain(t,s,h){if($('ttl'))$('ttl').textContent=t||'';if($('subh'))$('subh').textContent=s||'';if($('views'))$('views').innerHTML=h||''}
 function ban(){if(!me||!DB||!DB.school)return '';return '<div class="c ban s6"><h3>'+esc(String(me.role||'').toUpperCase())+'</h3><h2>'+esc(me.name||'')+'</h2><p>'+esc(me.level||me.subject||DB.school.name||'')+'</p><p>'+esc(me.adviser?'Adviser: '+me.adviser:(DB.school.tagline||''))+'</p></div>'}
 function buildShell(){if(!me||!Array.isArray(NAV)||!$('nav'))return;$('mn').textContent=me.name||'';$('mr').textContent=(me.role||'').charAt(0).toUpperCase()+(me.role||'').slice(1);$('mid').textContent=me.id||'';$('nav').innerHTML=NAV.map(function(n,i){return '<button type="button" class="nv'+(i===0?' on':'')+'" data-v="'+esc(n[0])+'"><b>'+esc(n[1])+'</b>'+esc(n[2])+'</button>'}).join('');$('nav').onclick=function(e){var b=e.target;while(b&&b!==this&&!b.classList.contains('nv'))b=b.parentNode;if(b&&b.classList.contains('nv')){openView(b.getAttribute('data-v'));closeSidebar()}};openView(NAV[0][0])}
+function refreshPortalView(){try{if(!me)return;var fresh=acctById(me.id);if(fresh)me=fresh;if(typeof buildShell==='function'&&$('nav')){var cur=document.querySelector('.nv.on');var v=cur?cur.getAttribute('data-v'):(NAV&&NAV[0]&&NAV[0][0]);buildShell();if(v&&VIEWS&&VIEWS[v])openView(v);}}catch(e){}}
 function checkSession(role){try{var s=JSON.parse(sessionStorage.getItem('mfa_session')||'null');if(!s||s.role!==role||!s.id||!s.ts||(Date.now()-s.ts)>SESSION_MAX_AGE){sessionStorage.removeItem('mfa_session');location.href='student-portal-mfa.html';return false}var a=acctById(s.id);if(!a||a.role!==role){sessionStorage.removeItem('mfa_session');location.href='student-portal-mfa.html';return false}me=a;return true}catch(e){sessionStorage.removeItem('mfa_session');location.href='student-portal-mfa.html';return false}}
 function signOut(){try{sessionStorage.removeItem('mfa_session')}catch(e){}location.href='student-portal-mfa.html'}
 function toggleSidebar(){var side=document.querySelector('.side'),overlay=document.querySelector('.sidebar-overlay');if(!side||!overlay)return;var isOpen=side.classList.toggle('open');overlay.classList.toggle('open',isOpen)}
