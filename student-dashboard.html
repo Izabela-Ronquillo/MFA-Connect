@@ -60,6 +60,7 @@ function s_att(){var st=DB.students[me.id]||ensureStudent(me.id),att=st.att||[];
 function s_pay(){var st=DB.students[me.id]||ensureStudent(me.id),paid=(st.fees.pay||[]).reduce(function(a,p){return a+p[3]},0),total=st.fees.total||0,rem=total-paid,pc=total?Math.round(paid/total*100):0;
   setMain('Balances & Payments','Recorded by the cashier','<div class="bento"><div class="c s2"><h3>Paid</h3><div class="ring" style="--p:'+pc+'"><div>'+pc+'%</div></div></div><div class="c s4"><h3>Summary</h3><div class="sum"><div><b>'+peso(total)+'</b><span>Total fees</span></div><div><b style="color:var(--ok)">'+peso(paid)+'</b><span>Paid</span></div><div><b style="color:'+(rem>0?'var(--g3)':'var(--ok)')+'">'+peso(rem)+'</b><span>Remaining</span></div></div></div><div class="c s6"><h3>Recent payment transactions</h3><div class="tl2">'+([].concat(st.fees.pay||[]).reverse().map(function(p){return '<div class="ev"><small>'+esc(p[0])+' \u00B7 '+esc(p[1])+'</small><div class="pay"><b>'+esc(p[2])+'</b><b>'+peso(p[3])+'</b></div></div>'}).join('')||'<p class="none">No transactions.</p>')+'</div></div></div>')}
 var VIEWS={s_home:s_home,s_grades:s_grades,s_sched:s_sched,s_att:s_att,s_pay:s_pay};
+$('out').onclick=signOut;
 if(checkSession('student')) buildShell();
 </script>
 </body>
