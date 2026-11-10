@@ -1,4 +1,4 @@
-﻿# MFA Connect
+# MFA Connect
 
 Static MFA portal frontend with Vercel serverless backend routes for MongoDB persistence.
 

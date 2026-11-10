@@ -1,4 +1,4 @@
-﻿const { connectToDatabase } = require('../lib/mongodb');
+const { connectToDatabase } = require('../lib/mongodb');
 
 function json(res, status, data) {
   res.statusCode = status;
