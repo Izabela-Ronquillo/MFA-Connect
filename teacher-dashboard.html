@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -17,90 +17,70 @@
 <script src="portal-shared.js"></script>
 <script>
 /* ---- on-screen error reporting ---- */
-window.onerror=function(msg,src,line){var b=document.getElementById('errbar');b.style.display='block';b.textContent+='Error: '+msg+' (line '+line+')\n'};
+window.onerror=function(msg,src,line){var b=document.getElementById('errbar');if(!b)return;b.style.display='block';b.textContent+='Error: '+msg+' (line '+line+')\n'};
 
 var LOGIN='student-portal-mfa.html';
-
-/* ---- teacher views ---- */
 var NAV=[['t_home','\u2302','Overview'],['t_sched','\u25F7','Schedule'],['t_upload','\u2605','Upload Grades'],['t_attend','\u2713','Attendance'],['t_advise','\u2605','My Advised Students']];
+
+function getTeacherSched(){
+  var base=DB.teacherSched||[];
+  var extra=(DB.teacherAssignments||[]).filter(function(a){return a.teacher===me.name}).map(function(a){return [a.time||'',a.subject||'',a.student||'',a.room||'',(a.days||[]).join(' \u00B7 ')]});
+  return base.concat(extra);
+}
+function getAdvisedStudents(){return DB.accounts.filter(function(a){return a.role==='student'&&a.adviser===me.name})}
 function t_home(){
   var pend=DB.gradeQueue.filter(function(g){return g.teacher===me.name&&g.status==='pending'}).length;
-  setMain('Teacher Dashboard','Manage classes and submit grades','<div class="bento">'+ban()+'<div class="c s3"><h3>Pending validation</h3><div class="big">'+pend+'</div><div class="cap">grades awaiting registrar</div></div><div class="c s3"><h3>Class blocks</h3><div class="big">'+DB.teacherSched.length+'</div></div></div>');
+  setMain('Teacher Dashboard','Manage classes and submit grades','<div class="bento">'+ban()+'<div class="c s3"><h3>Pending validation</h3><div class="big">'+esc(pend)+'</div><div class="cap">grades awaiting registrar</div></div><div class="c s3"><h3>Class blocks</h3><div class="big">'+esc(getTeacherSched().length)+'</div></div></div>');
 }
 function t_sched(){
-  setMain('Class Schedule','Your assigned classes','<div class="c"><div class="tl2">'+DB.teacherSched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+' \u00B7 '+esc(x[4])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+'</span></div>'}).join('')+'</div></div>');
+  var sched=getTeacherSched();
+  setMain('Class Schedule','Your assigned classes','<div class="c"><div class="tl2">'+(sched.length?sched.map(function(x){return '<div class="ev"><small>'+esc(x[0])+' \u00B7 '+esc(x[4])+'</small><b>'+esc(x[1])+'</b><span>'+esc(x[2])+' \u00B7 '+esc(x[3])+'</span></div>'}).join(''):'<p class="none">No schedule assigned.</p>')+'</div></div>');
 }
 function t_upload(){
-  var students=DB.accounts.filter(function(a){return a.role==='student'&&a.adviser===me.name});
-  var opts=students.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>'}).join('');
+  var students=getAdvisedStudents();
+  var opts=students.length?students.map(function(s){return '<option value="'+esc(s.id)+'">'+esc(s.name)+' ('+esc(s.id)+')</option>'}).join(''):'<option value="">No advised students</option>';
   var mine=DB.gradeQueue.filter(function(g){return g.teacher===me.name});
-  var rows=mine.length?mine.map(function(g){return '<tr><td>'+esc(g.student)+'</td><td>'+esc(g.subject)+'</td><td>'+g.quarter+'</td><td>'+g.grade+'</td><td><span class="tag '+(g.status==='pending'?'pend':g.status==='approved'?'ok':'bad')+'">'+esc(g.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="5" class="na">No submissions.</td></tr>';
+  var rows=mine.length?mine.map(function(g){return '<tr><td>'+esc(g.student)+'</td><td>'+esc(g.subject)+'</td><td>'+esc(g.quarter)+'</td><td>'+esc(g.grade)+'</td><td><span class="tag '+(g.status==='pending'?'pend':g.status==='approved'?'ok':'bad')+'">'+esc(g.status)+'</span></td></tr>'}).join(''):'<tr><td colspan="5" class="na">No submissions.</td></tr>';
   setMain('Upload Grades','Submitted grades must be validated by the registrar before students see them',
-   '<div class="c"><h3>Submit grade for your advised students</h3><div class="row"><div><label>Student</label><select id="tg_st">'+(opts||'<option>No advised students</option>')+'</select></div><div><label>Subject</label><input id="tg_sub" value="'+esc(me.subject||'')+'"></div><div><label>Quarter</label><select id="tg_q"><option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option></select></div><div><label>Grade</label><input id="tg_g" type="number" min="60" max="100" placeholder="60-100"></div></div><button class="btn sm" onclick="submitGrade()">Send to Registrar</button></div>'+
+   '<div class="c"><h3>Submit grade for your advised students</h3><div class="row"><div><label>Student</label><select id="tg_st">'+opts+'</select></div><div><label>Subject</label><input id="tg_sub" value="'+esc(me.subject||'')+'"></div><div><label>Quarter</label><select id="tg_q"><option value="1">Q1</option><option value="2">Q2</option><option value="3">Q3</option><option value="4">Q4</option></select></div><div><label>Grade</label><input id="tg_g" type="number" min="60" max="100" placeholder="60-100"></div></div><button class="btn sm" type="button" onclick="submitGrade()">Send to Registrar</button></div>'+
    '<div class="c" style="margin-top:1rem"><h3>Your submissions</h3><table class="tbl"><thead><tr><th>Student</th><th>Subject</th><th>Q</th><th>Grade</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>');
 }
 function t_attend(){
-  var students=DB.accounts.filter(function(a){return a.role==='student'&&a.adviser===me.name});
+  var students=getAdvisedStudents();
   var today=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});
   var rows=students.length?students.map(function(s){
-    var st=DB.students[s.id]||{att:[]};
-    var existing=st.att.find(function(a){return a[0]===today});
+    var st=DB.students[s.id]||ensureStudent(s.id);
+    var existing=(st.att||[]).find(function(a){return a[0]===today});
     var sel=existing?existing[1]:'';
-    return '<tr><td><b>'+esc(s.id)+'</b></td><td>'+esc(s.name)+'</td><td><select class="att-sel" data-sid="'+esc(s.id)+'"><option value="">--</option><option value="Present" '+(sel==='Present'?'selected':'')+'>Present</option><option value="Absent" '+(sel==='Absent'?'selected':'')+'>Absent</option><option value="Late" '+(sel==='Late'?'selected':'')+'>Late</option></select></td><td><button class="btn sm" onclick="saveAttend(\''+esc(s.id)+'\',\''+today+'\')">Save</button></td></tr>';
+    return '<tr><td><b>'+esc(s.id)+'</b></td><td>'+esc(s.name)+'</td><td><select class="att-sel" data-sid="'+esc(s.id)+'"><option value="">--</option><option value="Present" '+(sel==='Present'?'selected':'')+'>Present</option><option value="Absent" '+(sel==='Absent'?'selected':'')+'>Absent</option><option value="Late" '+(sel==='Late'?'selected':'')+'>Late</option></select></td><td><button class="btn sm" type="button" onclick="saveAttend(this.dataset.sid,\''+esc(today)+'\')" data-sid="'+esc(s.id)+'">Save</button></td></tr>';
   }).join(''):'<tr><td colspan="4" class="na">No advised students.</td></tr>';
   setMain('Attendance','Mark attendance for '+today,'<div class="c"><table class="tbl"><thead><tr><th>ID</th><th>Student</th><th>Status</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>');
 }
 function saveAttend(sid,date){
-  var sel=document.querySelector('.att-sel[data-sid="'+sid+'"]');
+  var sel=[].slice.call(document.querySelectorAll('.att-sel')).filter(function(e){return e.dataset.sid===sid})[0];
   var status=sel?sel.value:'';
-  if(!status){flash('Select a status.','err');return}
-  var st=DB.students[sid];
-  if(!st){st={att:[]};DB.students[sid]=st}
-  if(!st.att)st.att=[];
+  if(!sid||!status){flash('Select a status.','err');return}
+  var st=ensureStudent(sid);
   var idx=st.att.findIndex(function(a){return a[0]===date});
-  if(idx>=0)st.att[idx][1]=status;else st.att.push([date,status]);
-  saveDB();flash('Attendance saved.');t_attend();
+  if(idx>=0) st.att[idx][1]=status; else st.att.unshift([date,status]);
+  saveDB(); flash('Attendance saved.'); t_attend();
 }
 function t_advise(){
-  var students=DB.accounts.filter(function(a){return a.role==='student'&&a.adviser===me.name});
+  var students=getAdvisedStudents();
   setMain('My Advised Students','Students assigned to you as adviser','<div class="c"><table class="tbl"><thead><tr><th>ID</th><th>Name</th><th>Level/Section</th><th>SY</th></tr></thead><tbody>'+(students.length?students.map(function(s){return '<tr><td><b>'+esc(s.id)+'</b></td><td>'+esc(s.name)+'</td><td>'+esc(s.level||'Unassigned')+'</td><td>'+esc(s.sy||'')+'</td></tr>'}).join(''):'<tr><td colspan="4" class="na">No advised students.</td></tr>')+'</tbody></table></div>');
 }
 function submitGrade(){
-  var sid=$('tg_st').value,sub=$('tg_sub').value.trim(),q=+$('tg_q').value,g=+$('tg_g').value,stu=acctById(sid);
+  var sid=$('tg_st')?$('tg_st').value:'', sub=$('tg_sub')?$('tg_sub').value.trim():'', q=Number($('tg_q')?$('tg_q').value:0), g=Number($('tg_g')?$('tg_g').value:NaN), stu=acctById(sid);
   if(!stu||!sub||!(g>=60&&g<=100)){flash('Select student, subject, and grade (60-100).','err');return}
-  DB.gradeQueue.push({id:++DB._seq,studentId:sid,student:stu.name,subject:sub,quarter:q,grade:g,teacher:me.name,status:'pending',sy:stu.sy||'2025\u20132026'});
-  saveDB();t_upload();flash('Grade sent to registrar for validation.');
+  var dup=DB.gradeQueue.some(function(x){return x.studentId===sid&&x.quarter===q&&String(x.subject).toLowerCase()===sub.toLowerCase()&&x.status==='pending'});
+  if(dup){flash('A grade for this student, subject and quarter is already pending.','err');return}
+  DB.gradeQueue.push({id:++DB._seq,studentId:sid,student:stu.name,subject:sub,quarter:q,grade:Math.round(g),teacher:me.name,status:'pending',sy:stu.sy||'2025\u20132026'});
+  saveDB(); t_upload(); flash('Grade sent to registrar for validation.');
 }
 var VIEWS={t_home:t_home,t_sched:t_sched,t_upload:t_upload,t_attend:t_attend,t_advise:t_advise};
 
-/* ---- start ---- */
 $('out').onclick=signOut;
-$('nav').innerHTML=NAV.map(function(n,i){return '<button class="nv'+(i===0?' on':'')+'" data-v="'+n[0]+'"><b>'+n[1]+'</b>'+n[2]+'</button>'}).join('');
-$('nav').onclick=function(e){var b=e.target;while(b&&b!==this&&!b.classList.contains('nv'))b=b.parentNode;if(b&&b.classList.contains('nv'))openView(b.getAttribute('data-v'))};
-
-var sess=null;try{sess=JSON.parse(sessionStorage.getItem('mfa_session')||'null')}catch(e){}
-var acct=sess&&acctById(sess.id);
-function startPortal(){
-  me=acct;$('mn').textContent=me.name;$('mr').textContent='Teacher';$('mid').textContent=me.id;
-  $('nav').style.display='';openView('t_home');
-}
-function changePw(){
-  var a=$('np1').value,b=$('np2').value;
-  if(a.length<8){flash('Password must be at least 8 characters.','err');return}
-  if(a===acct.pw){flash('New password must be different from the temporary password.','err');return}
-  if(a!==b){flash('Passwords do not match.','err');return}
-  acct.pw=a;acct.first=false;saveDB();
-  startPortal();flash('Password updated. Welcome!');
-}
-if(acct&&acct.role==='teacher'&&acct.first){
-  $('mn').textContent=acct.name;$('mr').textContent='Teacher';$('mid').textContent=acct.id;
-  $('nav').style.display='none';
-  setMain('Set Your Password','You are using a temporary password. Create a new one to continue.','<div class="c" style="max-width:520px"><h3>Change password</h3><div class="row"><div><label>New password</label><input id="np1" type="password" placeholder="At least 8 characters"></div><div><label>Confirm new password</label><input id="np2" type="password" placeholder="Re-enter password"></div></div><button class="btn sm" onclick="changePw()">Save & Continue</button></div>');
-}else if(acct&&acct.role==='teacher'){
-  startPortal();
-}else{
-  setMain('Not signed in','','<div class="c"><div class="msg err">No teacher session found (session: '+esc(JSON.stringify(sess))+'). Sign in as a teacher from <a href="'+LOGIN+'" style="color:#f0d060">'+LOGIN+'</a> (teacher-001 / teacher123).</div></div>');
-}
+if(checkSession('teacher'))buildShell();
 </script>
 </body>
 </html>
