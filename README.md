@@ -14,12 +14,12 @@ Static MFA portal frontend with Vercel serverless backend routes for MongoDB per
 - MONGODB_DB (optional, default: MFAWEBSITE) â€“ database name.
 
 ### Behavior
-- Login syncs portal data from /api/db, attempts /api/login, and falls back to local/demo data if the API is unavailable.
+- Login syncs portal data from /api/db, attempts /api/login, and falls back to local cached data if the API is unavailable.
 - Dashboard pages call syncDBFromServer() on load to refresh data from MongoDB.
 - saveDB() writes to browser localStorage and posts updates to /api/db for persistence.
-- First deploy/first request seeds the portal document with default/demo data if missing.
+- First deploy/first request creates an empty `portal` document in `studentportal` if missing.
 
 ## Local/dev notes
-- Frontend pages are static HTML/JS/CSS and can be opened locally; without the backend they use localStorage/demo behavior.
+- Frontend pages are static HTML/JS/CSS and can be opened locally; without the backend they use localStorage data.
 - Deploying to Vercel serves the static files and /api/* functions together.
 

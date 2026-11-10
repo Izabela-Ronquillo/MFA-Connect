@@ -45,20 +45,12 @@ input:focus{outline:2px solid var(--g3)}
   <div class="fwrap">
     <form id="lf" autocomplete="off">
       <h2>Welcome <span class="gt">back</span></h2><p class="sub">Use the account provided by the school.</p>
-      <label for="uid">ID / Username</label><input id="uid" placeholder="e.g. 2023-0142 or admin-001" required>
+      <label for="uid">ID / Username</label><input id="uid" placeholder="Enter your ID / Username" required>
       <label for="pw">Password</label><div class="pw-wrap"><input id="pw" type="password" required><button type="button" class="pw-toggle" data-target="pw" aria-pressed="false">Show</button></div>
       <div class="err" id="err"></div>
       <button class="btn" type="submit">Sign In</button>
       <div class="links"><button type="button" onclick="window.location.href='index.html'">&larr; Back to website</button><button type="button" onclick="showForgot()" class="o">Forgot password?</button></div>
-      <div class="hint"><b>Demo accounts (temporary passwords):</b><br>
-        <b>Admin:</b> admin-001 / Temp#Admin1<br>
-        <b>Registrar:</b> registrar-001 / Temp#Regis1<br>
-        <b>Cashier:</b> cashier-001 / Temp#Cash1<br>
-        <b>Teacher:</b> teacher-001 / Temp#Teach1<br>
-        <b>Student:</b> 2023-0142 / Temp#Stud1<br>
-        You will be asked to change the password on first sign-in. New passwords must be at least 10 characters and include uppercase, lowercase, number, and special character.<br>
-        <span style="opacity:.85">Note: this is a client-side demo using browser storage; do not use real credentials. Existing saved data in this browser is preserved.</span>
-      </div>
+      <div class="hint">Use the account credentials provided by the school administrator. New passwords must be at least 10 characters and include uppercase, lowercase, number, and special character.</div>
     </form>
 <form id="cf" autocomplete="off" style="display:none">
       <h2>Change <span class="gt">password</span></h2><p class="sub" id="cfSub">Your temporary password must be changed before you can continue.</p>
@@ -70,7 +62,7 @@ input:focus{outline:2px solid var(--g3)}
     </form>
     <form id="ff" autocomplete="off" style="display:none">
       <h2>Forgot <span class="gt">password</span></h2><p class="sub">Enter your ID to reset your password.</p>
-      <label for="fid">ID / Username</label><input id="fid" placeholder="e.g. 2023-0142 or admin-001" required>
+      <label for="fid">ID / Username</label><input id="fid" placeholder="Enter your ID / Username" required>
       <div class="err" id="err3"></div>
       <button class="btn" type="submit">Reset Password</button>
       <div class="links"><button type="button" onclick="hideForgot()" class="o">&larr; Back to sign in</button></div>
@@ -87,28 +79,11 @@ input:focus{outline:2px solid var(--g3)}
 </section>
 <script>
 var DEFAULT={school:{name:'Marvelous Faith Academy',tagline:'Keep the Faith Alive!',address:'125 FTM Compound, Mambog 4, Bacoor City, Cavite, Philippines, 4102',phone:'0917 123 4567',email:'mfaonline@mfabacoor.net',about:'MFA Connect portal.'},
- accounts:[{id:'admin-001',pw:'Temp#Admin1',role:'admin',name:'Ms. Angela Reyes',first:true},{id:'registrar-001',pw:'Temp#Regis1',role:'registrar',name:'Mrs. Liza Bautista',first:true},{id:'cashier-001',pw:'Temp#Cash1',role:'cashier',name:'Mr. Carlo Santos',first:true},{id:'teacher-001',pw:'Temp#Teach1',role:'teacher',name:'Mr. Roberto Garcia',subject:'Mathematics',first:true},{id:'2023-0142',pw:'Temp#Stud1',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mr. Roberto Garcia',first:true}],
- students:{'2023-0142':{sched:[['7:30 \u2013 8:30 AM','Filipino','Mon \u00B7 Wed \u00B7 Fri','Rm 201','Mrs. Reyes'],['8:30 \u2013 9:30 AM','Mathematics','Mon \u2013 Fri','Rm 201','Mr. Garcia'],['9:45 \u2013 10:45 AM','Science','Mon \u00B7 Tue \u00B7 Thu','Science Lab','Ms. Villanueva'],['10:45 \u2013 11:45 AM','English','Mon \u2013 Fri','Rm 201','Mrs. Cruz'],['1:00 \u2013 2:00 PM','Araling Panlipunan','Tue \u00B7 Thu','Rm 201','Mr. Bautista'],['2:00 \u2013 3:00 PM','MAPEH','Wed \u00B7 Fri','Gym','Coach Ramos'],['3:00 \u2013 4:00 PM','Christian Living','Tue','Chapel','Pastor Lim']],
- att:[['Nov 3','Present'],['Oct 31','Present'],['Oct 30','Late'],['Oct 29','Present'],['Oct 28','Present'],['Oct 27','Absent'],['Oct 24','Present'],['Oct 23','Present'],['Oct 22','Present'],['Oct 21','Late']],
- fees:{total:42500,pay:[['Jun 10, 2025','OR-004512','Enrollment / Downpayment',15000],['Aug 5, 2025','OR-004877','Monthly Installment',5500],['Sep 8, 2025','OR-005103','Monthly Installment',5500],['Oct 6, 2025','OR-005390','Monthly Installment',5500]]},
- grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}},
- teacherSched:[['7:30 \u2013 8:30 AM','Mathematics 8','Grade 8 \u2013 St. Matthew','Rm 201','Mon \u2013 Fri'],['8:30 \u2013 9:30 AM','Math Remediation','Grade 8 \u2013 St. Mark','Rm 202','Tue \u00B7 Thu']],
- gradeQueue:[{id:1,studentId:'2023-0142',student:'Juan Miguel Dela Cruz',subject:'Mathematics',quarter:2,grade:87,teacher:'Mr. Roberto Garcia',status:'pending',sy:'2025\u20132026'}],
- documents:[{id:1,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Registration Form',status:'On file',date:'Jun 5, 2025'},{id:2,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Certificate of Enrollment',status:'Available on request',date:'Jun 10, 2025'}],teacherAssignments:[],site:{heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',about:'',footer:'',announcements:[]},_seq:10};
+ accounts:[],students:{},teacherSched:[],gradeQueue:[],documents:[],teacherAssignments:[],site:{heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',about:'',footer:'',announcements:[]},_seq:1};
 function clone(o){return JSON.parse(JSON.stringify(o))}
 function isStrongPassword(pw){pw=String(pw||'');return pw.length>=10&&/[a-z]/.test(pw)&&/[A-Z]/.test(pw)&&/[0-9]/.test(pw)&&/[^A-Za-z0-9]/.test(pw)}
 function passwordPolicyMessage(){return 'Password must be at least 10 characters and include uppercase, lowercase, number, and special character.'}
-var LEGACY_PW={'admin-001':'admin123','registrar-001':'registrar123','cashier-001':'cashier123','teacher-001':'teacher123','2023-0142':'temp1234'};
-var DEMO_TEMP={'admin-001':'Temp#Admin1','registrar-001':'Temp#Regis1','cashier-001':'Temp#Cash1','teacher-001':'Temp#Teach1','2023-0142':'Temp#Stud1'};
-function migrateLegacyAccounts(db){
-  if(!db||!Array.isArray(db.accounts)) return db;
-  for(var i=0;i<db.accounts.length;i++){
-    var a=db.accounts[i]; if(!a||!a.id) continue;
-    if(LEGACY_PW[a.id] && a.pw===LEGACY_PW[a.id]){ a.pw=DEMO_TEMP[a.id]||a.pw; a.first=true; }
-  }
-  return db;
-}
-function normalizeDB(d){var base=clone(DEFAULT);if(!d||typeof d!=='object')return base;d.school=Object.assign({},base.school,d.school||{});d.accounts=Array.isArray(d.accounts)?d.accounts.filter(function(a){return a&&a.id&&a.role&&a.name}).map(function(a){return Object.assign({pw:'',first:false},a)}):base.accounts;d.students=d.students&&typeof d.students==='object'?d.students:base.students;d.teacherSched=Array.isArray(d.teacherSched)?d.teacherSched:base.teacherSched;d.gradeQueue=Array.isArray(d.gradeQueue)?d.gradeQueue:base.gradeQueue;d.documents=Array.isArray(d.documents)?d.documents:base.documents;d.teacherAssignments=Array.isArray(d.teacherAssignments)?d.teacherAssignments:base.teacherAssignments;d.site=Object.assign({},base.site,d.site||{});if(!Array.isArray(d.site.announcements))d.site.announcements=[];d._seq=typeof d._seq==='number'?d._seq:base._seq;return migrateLegacyAccounts(d)}
+function normalizeDB(d){var base=clone(DEFAULT);if(!d||typeof d!=='object')return base;d.school=Object.assign({},base.school,d.school||{});d.accounts=Array.isArray(d.accounts)?d.accounts.filter(function(a){return a&&a.id&&a.role&&a.name}).map(function(a){return Object.assign({pw:'',first:false},a)}):base.accounts;d.students=d.students&&typeof d.students==='object'?d.students:base.students;d.teacherSched=Array.isArray(d.teacherSched)?d.teacherSched:base.teacherSched;d.gradeQueue=Array.isArray(d.gradeQueue)?d.gradeQueue:base.gradeQueue;d.documents=Array.isArray(d.documents)?d.documents:base.documents;d.teacherAssignments=Array.isArray(d.teacherAssignments)?d.teacherAssignments:base.teacherAssignments;d.site=Object.assign({},base.site,d.site||{});if(!Array.isArray(d.site.announcements))d.site.announcements=[];d._seq=typeof d._seq==='number'?d._seq:base._seq;return d}
 function loadDB(){try{var raw=localStorage.getItem('mfa_portal_db');if(!raw)return clone(DEFAULT);var d=JSON.parse(raw);if(!d||!Array.isArray(d.accounts))return clone(DEFAULT);return normalizeDB(d)}catch(e){return clone(DEFAULT)}}
 function saveDB(){try{localStorage.setItem('mfa_portal_db',JSON.stringify(DB))}catch(e){}}
 var DB=loadDB(), PENDING=null;
@@ -183,11 +158,6 @@ document.getElementById('lf').addEventListener('submit',async function(e){
   await syncLoginDB();
   var remote=await apiLogin(id,pw);
   var a=null; for(var i=0;i<DB.accounts.length;i++){if(DB.accounts[i].id===id){a=DB.accounts[i];break;}}
-  if(!a && DEMO_TEMP[id]){
-    var def=null; for(var j=0;j<DEFAULT.accounts.length;j++){if(DEFAULT.accounts[j].id===id){def=DEFAULT.accounts[j];break;}}
-    if(def && (pw===DEMO_TEMP[id] || pw===LEGACY_PW[id])){ a=clone(def); a.pw=DEMO_TEMP[id]; a.first=true; DB.accounts.push(a); if(a.role==='student' && !DB.students[id]) DB.students[id]=clone(DEFAULT.students[id]||{sched:[],att:[],fees:{total:0,pay:[]},grades:{}}); saveDB(); }
-  }
-  if(a && LEGACY_PW[id] && pw===LEGACY_PW[id]){ a.pw=DEMO_TEMP[id]; a.first=true; saveDB(); pw=DEMO_TEMP[id]; }
   if(remote && a){ var keepPw=a.pw; a=Object.assign({},a,remote); a.pw=keepPw; }
   else if(remote && !a){ a=remote; }
   if(!a||(!remote && a.pw!==pw)){err.textContent='Incorrect ID or password.';return}

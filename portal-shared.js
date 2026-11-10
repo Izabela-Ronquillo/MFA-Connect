@@ -15,25 +15,8 @@ function flash(msg,type){type=type||'ok';var el=$('flash');if(!el)return;el.inne
 function onDay(s,d){var m=String(s||'').match(/(\w{3}) \u2013 (\w{3})/);if(m){var a=D.indexOf(m[1]),b=D.indexOf(m[2]);if(a>=0&&b>=0)return d>=a&&d<=b}return String(s||'').indexOf(D[d])>=0}
 function v(g){return g==null?'<span class="na">\u2013</span>':esc(g)}
 var DEFAULT={school:{name:'Marvelous Faith Academy',tagline:'Keep the Faith Alive!',address:'125 FTM Compound, Mambog 4, Bacoor City, Cavite, Philippines, 4102',phone:'0917 123 4567',email:'mfaonline@mfabacoor.net',about:'MFA Connect portal.'},
- accounts:[{id:'admin-001',pw:'Temp#Admin1',role:'admin',name:'Ms. Angela Reyes',first:true},{id:'registrar-001',pw:'Temp#Regis1',role:'registrar',name:'Mrs. Liza Bautista',first:true},{id:'cashier-001',pw:'Temp#Cash1',role:'cashier',name:'Mr. Carlo Santos',first:true},{id:'teacher-001',pw:'Temp#Teach1',role:'teacher',name:'Mr. Roberto Garcia',subject:'Mathematics',first:true},{id:'2023-0142',pw:'Temp#Stud1',role:'student',name:'Juan Miguel Dela Cruz',level:'Grade 8 \u2013 St. Matthew',sy:'2025\u20132026',adviser:'Mr. Roberto Garcia',first:true}],
- students:{'2023-0142':{sched:[['7:30 \u2013 8:30 AM','Filipino','Mon \u00B7 Wed \u00B7 Fri','Rm 201','Mrs. Reyes'],['8:30 \u2013 9:30 AM','Mathematics','Mon \u2013 Fri','Rm 201','Mr. Garcia'],['9:45 \u2013 10:45 AM','Science','Mon \u00B7 Tue \u00B7 Thu','Science Lab','Ms. Villanueva'],['10:45 \u2013 11:45 AM','English','Mon \u2013 Fri','Rm 201','Mrs. Cruz'],['1:00 \u2013 2:00 PM','Araling Panlipunan','Tue \u00B7 Thu','Rm 201','Mr. Bautista'],['2:00 \u2013 3:00 PM','MAPEH','Wed \u00B7 Fri','Gym','Coach Ramos'],['3:00 \u2013 4:00 PM','Christian Living','Tue','Chapel','Pastor Lim']],
- att:[['Nov 3','Present'],['Oct 31','Present'],['Oct 30','Late'],['Oct 29','Present'],['Oct 28','Present'],['Oct 27','Absent'],['Oct 24','Present'],['Oct 23','Present'],['Oct 22','Present'],['Oct 21','Late']],
- fees:{total:42500,pay:[['Jun 10, 2025','OR-004512','Enrollment / Downpayment',15000],['Aug 5, 2025','OR-004877','Monthly Installment',5500],['Sep 8, 2025','OR-005103','Monthly Installment',5500],['Oct 6, 2025','OR-005390','Monthly Installment',5500]]},
- grades:{'2025\u20132026':[['Filipino',88,90,null,null,null],['English',91,89,null,null,null],['Mathematics',84,null,null,null,null],['Science',86,88,null,null,null],['Araling Panlipunan',90,92,null,null,null],['MAPEH',93,94,null,null,null],['Edukasyon sa Pagpapakatao',95,94,null,null,null],['TLE',89,91,null,null,null],['Christian Living',96,97,null,null,null]]}}},
- teacherSched:[['7:30 \u2013 8:30 AM','Mathematics 8','Grade 8 \u2013 St. Matthew','Rm 201','Mon \u2013 Fri'],['8:30 \u2013 9:30 AM','Math Remediation','Grade 8 \u2013 St. Mark','Rm 202','Tue \u00B7 Thu']],
- gradeQueue:[{id:1,studentId:'2023-0142',student:'Juan Miguel Dela Cruz',subject:'Mathematics',quarter:2,grade:87,teacher:'Mr. Roberto Garcia',status:'pending',sy:'2025\u20132026'}],
- documents:[{id:1,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Registration Form',status:'On file',date:'Jun 5, 2025'},{id:2,student:'Juan Miguel Dela Cruz',studentId:'2023-0142',type:'Certificate of Enrollment',status:'Available on request',date:'Jun 10, 2025'}],teacherAssignments:[],site:{heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',about:'',footer:'',announcements:[]},_seq:10};
+ accounts:[],students:{},teacherSched:[],gradeQueue:[],documents:[],teacherAssignments:[],site:{heroTitle:'Welcome to Marvelous Faith Academy',heroSub:'',historyTitle:'Our History',historyText:'',mission:'',vision:'',contact:'',hymn:'',about:'',footer:'',announcements:[]},_seq:1};
 function clone(o){return JSON.parse(JSON.stringify(o))}
-var LEGACY_PW={'admin-001':'admin123','registrar-001':'registrar123','cashier-001':'cashier123','teacher-001':'teacher123','2023-0142':'temp1234'};
-var DEMO_TEMP={'admin-001':'Temp#Admin1','registrar-001':'Temp#Regis1','cashier-001':'Temp#Cash1','teacher-001':'Temp#Teach1','2023-0142':'Temp#Stud1'};
-function migrateLegacyAccounts(db){
-  if(!db||!Array.isArray(db.accounts)) return db;
-  for(var i=0;i<db.accounts.length;i++){
-    var a=db.accounts[i]; if(!a||!a.id) continue;
-    if(LEGACY_PW[a.id] && a.pw===LEGACY_PW[a.id]){ a.pw=DEMO_TEMP[a.id]||a.pw; a.first=true; }
-  }
-  return db;
-}
 function normalizeDB(d){
   var base=clone(DEFAULT); if(!d||typeof d!=='object') return base;
   d.school=Object.assign({},base.school,d.school||{});
@@ -46,7 +29,7 @@ function normalizeDB(d){
   d.site=Object.assign({},base.site,d.site||{});
   if(!Array.isArray(d.site.announcements)) d.site.announcements=[];
   d._seq=typeof d._seq==='number'?d._seq:base._seq;
-  return migrateLegacyAccounts(d);
+  return d;
 }
 function loadDB(){
   try{var raw=localStorage.getItem('mfa_portal_db');if(!raw)return clone(DEFAULT);var d=JSON.parse(raw);if(!d||!Array.isArray(d.accounts))return clone(DEFAULT);return normalizeDB(d)}catch(e){return clone(DEFAULT)}
