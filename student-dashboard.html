@@ -25,7 +25,6 @@
 var D=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],FD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 var $=function(id){return document.getElementById(id)};
 var peso=function(n){return '\u20B1'+Number(n||0).toLocaleString('en-PH',{minimumFractionDigits:2})};
-var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(m){return {'&':'&','<':'<','>':'>','"':'"',"'":'''}[m]})};
 function onDay(s,d){var m=s.match(/(\w{3}) \u2013 (\w{3})/);if(m){var a=D.indexOf(m[1]),b=D.indexOf(m[2]);if(a>=0&&b>=0)return d>=a&&d<=b}return s.indexOf(D[d])>=0}
 function v(g){return g==null?'<span class="na">\u2013</span>':esc(g)}
 
